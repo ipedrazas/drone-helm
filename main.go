@@ -15,7 +15,7 @@ var build = "0" // build number set at compile-time
 
 // PluginParams to execute Helm
 type PluginParams struct {
-	Command         []string `json:"command"`
+	Command         []string `json:"helm_command"`
 	APIServer       string   `json:"api_server"`
 	KubernetesToken string   `json:"kubernetes_token"`
 	Namespace       string   `json:"namespace"`

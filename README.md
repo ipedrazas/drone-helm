@@ -13,7 +13,7 @@ For example, this configuration will deploy Jenkins using the [stable/jenkins ch
                     - "--name"
                     - "my-release"
                     - "stable/jenkins"
-                    - "--debug", 
+                    - "--debug" 
                     - "--dry-run"
                 api_server: "http://my_api_server"
                 kubernetes_token: "secret token"
