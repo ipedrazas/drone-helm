@@ -12,15 +12,14 @@ pipeline:
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
 
-    latest:
-        image: plugins/docker
-        repo: ipedrazas/drone-helm
-        tags: [ "latest", "1.0", "1" ]
-        when:
-          branch: master
-          event: push
+  latest:
+    image: plugins/docker
+    repo: ipedrazas/drone-helm
+    tags: [ "latest", "1.0", "1" ]
+    when:
+      branch: master
+      event: push
         
-
 plugin:
   name: drone-helm
   desc: Execute helm to 
