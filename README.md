@@ -1,6 +1,8 @@
 # Helm (Kubernetes) plugin for drone.io
 
-This plugin allows to deploy a Helm chart into a Kubernetes cluster.
+This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
+
+For example, this configuration will deploy Jenkins using the [stable/jenkins chart](https://github.com/kubernetes/charts/tree/master/stable/jenkins)
 
 
         pipeline:
