@@ -2,89 +2,65 @@ package main
 
 import (
 	"fmt"
-	"html/template"
-	"log"
 	"os"
-	"os/exec"
 
-	"github.com/drone/drone-go/drone"
-	"github.com/drone/drone-plugin-go/plugin"
+	"github.com/Sirupsen/logrus"
+	"github.com/joho/godotenv"
+	"github.com/urfave/cli"
 )
 
 var build = "0" // build number set at compile-time
 
-// PluginParams to execute Helm
-type PluginParams struct {
-	Command         []string `json:"helm_command"`
-	APIServer       string   `json:"api_server"`
-	KubernetesToken string   `json:"kubernetes_token"`
-	Namespace       string   `json:"namespace"`
-	Debug           string   `json:"debug"`
-	Kubeconfig      string   `json:"kubeconfig"`
-	SkipTLSVerify   string   `json:"skip_tls_verify"`
-}
-
-func isValidConfig(params *PluginParams) bool {
-	if params.APIServer == "" {
-		return false
-	}
-	if params.KubernetesToken == "" {
-		return false
-	}
-	return true
-}
-func initialiseKubeconfig(params *PluginParams) {
-	fmt.Println(params)
-	if params.Kubeconfig == "" {
-		params.Kubeconfig = "/root/.kube/config"
-	}
-	if isValidConfig(params) {
-		t, _ := template.ParseFiles("/root/.kube/kubeconfig")
-		f, err := os.Create(params.Kubeconfig)
-		if err != nil {
-			log.Println("create file: ", err)
-			return
-		}
-		err = t.Execute(f, params)
-		if err != nil {
-			log.Print("execute: ", err)
-			return
-		}
-		f.Close()
-	}
-}
-
 func main() {
-	var (
-		repo         = new(drone.Repo)
-		build        = new(drone.Build)
-		sys          = new(drone.System)
-		pluginParams = new(PluginParams)
-	)
-
-	plugin.Param("build", build)
-	plugin.Param("repo", repo)
-	plugin.Param("system", sys)
-	plugin.Param("vargs", pluginParams)
-	plugin.MustParse()
-
-	initialiseKubeconfig(pluginParams)
-	init := make([]string, 1)
-	init[0] = "init"
-	runCommand("/bin/helm", init)
-	runCommand("/bin/helm", pluginParams.Command)
-
+	app := cli.NewApp()
+	app.Name = "helm plugin"
+	app.Usage = "helm plugin"
+	app.Action = run
+	app.Version = fmt.Sprintf("1.0.%s", build)
+	app.Flags = []cli.Flag{
+		cli.StringSliceFlag{
+			Name:   "helm_command",
+			Usage:  "add the command Helm has to execute",
+			EnvVar: "PLUGIN_HELM_COMMAND",
+		},
+		cli.StringFlag{
+			Name:   "api_server",
+			Usage:  "Api Server url",
+			EnvVar: "PLUGIN_API_SERVER",
+		},
+		cli.StringFlag{
+			Name:   "token",
+			Usage:  "Kubernetes Token",
+			EnvVar: "PLUGIN_TOKEN",
+		},
+		cli.StringFlag{
+			Name:   "namespace",
+			Usage:  "Kubernetes namespace",
+			EnvVar: "PLUGIN_NAMESPACE",
+		},
+		cli.BoolFlag{
+			Name:   "skip_tls_verify",
+			Usage:  "Skip TLS verification",
+			EnvVar: "PLUGIN_SKIP_TLS_VERIFY",
+		},
+	}
+	if err := app.Run(os.Args); err != nil {
+		logrus.Fatal(err)
+	}
 }
 
-func runCommand(command string, params []string) {
-	cmd := new(exec.Cmd)
-	cmd = exec.Command(command, params...)
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		fmt.Printf("%s\n", err)
+func run(c *cli.Context) error {
+	if c.String("env-file") != "" {
+		_ = godotenv.Load(c.String("env-file"))
 	}
+	plugin := Plugin{
+		Config: Config{
+			APIServer:     c.String("api_server"),
+			Token:         c.String("token"),
+			HelmCommand:   c.StringSlice("helm_command"),
+			Namespace:     c.String("namespace"),
+			SkipTLSVerify: c.Bool("skip_tls_verify"),
+		},
+	}
+	return plugin.Exec()
 }
