@@ -12,7 +12,7 @@ pipeline:
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
 
-    build_docker_image:
+  build_docker_image:
     image: docker:1.12
     environment:
       - DOCKER_HOST=tcp://127.0.0.1:2375
