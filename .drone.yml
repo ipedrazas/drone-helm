@@ -22,6 +22,7 @@ pipeline:
       - docker build -t image .      
       - docker tag image quay.io/ipedrazas/drone-helm:latest
       - docker tag image quay.io/ipedrazas/drone-helm:${TAG}
+      - docker push quay.io/ipedrazas/drone-helm
         
 services:
   dind:
