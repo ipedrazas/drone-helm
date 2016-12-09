@@ -8,7 +8,7 @@ For example, this configuration will deploy Jenkins using the [stable/jenkins ch
         pipeline:
             deploy:
                 image: ipedrazas/drone-helm
-                command: 
+                helm_command: 
                     - "install"
                     - "--name"
                     - "my-release"
@@ -35,7 +35,7 @@ To test the plugin, you can run `minikube` and just run the docker image as foll
         {
             
             "vargs": {
-                "command": ["version"],
+                "helm_command": ["version"],
                 "api_server":"https://192.168.64.5:8443",
                 "kubernetes_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tcnloeTciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjU5ZWQzYjM1LWI0MmUtMTFlNi05ZDI3LTFlZGZkMzA0MTNhNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.aGX19xTFJdxC6d5hObKUms9Kaq0wR8fMypXTnsfjC6XjiA3_QWX9LJdRFl6wvZTRoIAjuOhAJKNAKhLQ3sK0aKrddNxn2is-HCb88BXma3BrHWOtkwajvZ1dyAhZOe2fY1I77t_mrbvTMqJ4udsom6roHf-KL8j29DJWsV0nFh6VKyvqN8f7FsNG3WuH3SFZX_LfcE0HfZxrDaVEi-CkDo0sGCqIefDk2sn4IQD6b1Ng-grJWSN-YtrcDDduEKlUHPSRMmMtWa3-Q61-yQqlyqATGbxC3UwqwaLfjCrTkg1Uikv4jWDP3-eNmuQCqG9PHKulA1riTFAgxbr09zoYxg",
                 "namespace": "default",
@@ -52,7 +52,7 @@ the previous `.drone.yml` configuration:
         {
             
             "vargs": {
-                "command": ["install", "--name", "my-release", "stable/jenkins", "--debug", "--dry-run"],
+                "helm_command": ["install", "--name", "my-release", "stable/jenkins", "--debug", "--dry-run"],
                 "api_server":"https://192.168.64.5:8443",
                 "kubernetes_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tcnloeTciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjU5ZWQzYjM1LWI0MmUtMTFlNi05ZDI3LTFlZGZkMzA0MTNhNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.aGX19xTFJdxC6d5hObKUms9Kaq0wR8fMypXTnsfjC6XjiA3_QWX9LJdRFl6wvZTRoIAjuOhAJKNAKhLQ3sK0aKrddNxn2is-HCb88BXma3BrHWOtkwajvZ1dyAhZOe2fY1I77t_mrbvTMqJ4udsom6roHf-KL8j29DJWsV0nFh6VKyvqN8f7FsNG3WuH3SFZX_LfcE0HfZxrDaVEi-CkDo0sGCqIefDk2sn4IQD6b1Ng-grJWSN-YtrcDDduEKlUHPSRMmMtWa3-Q61-yQqlyqATGbxC3UwqwaLfjCrTkg1Uikv4jWDP3-eNmuQCqG9PHKulA1riTFAgxbr09zoYxg",
                 "namespace": "default",

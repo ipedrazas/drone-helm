@@ -34,6 +34,7 @@ func isValidConfig(params *PluginParams) bool {
 	return true
 }
 func initialiseKubeconfig(params *PluginParams) {
+	fmt.Println(params)
 	if params.Kubeconfig == "" {
 		params.Kubeconfig = "/root/.kube/config"
 	}
