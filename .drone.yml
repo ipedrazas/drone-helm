@@ -12,19 +12,30 @@ pipeline:
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
 
-  latest:
-    image: plugins/docker
-    repo: ipedrazas/drone-helm
-    tags: [ "latest", "1.0", "1" ]
-    when:
-      branch: master
-      event: push
+    build_docker_image:
+    image: docker:1.12
+    environment:
+      - DOCKER_HOST=tcp://127.0.0.1:2375
+      - TAG=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    commands:
+      - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
+      - docker build -t image .      
+      - docker tag image quay.io/ipedrazas/drone-helm:latest
+      - docker tag image quay.io/ipedrazas/drone-helm:${TAG}
         
+services:
+  dind:
+    image: docker:1.12-dind
+    privileged: true
+    command:
+      - "-s"
+      - "overlay"
+  
 plugin:
   name: drone-helm
   desc: Execute helm to 
   type: deploy
-  image: ipedrazas/drone-helm
+  image: quay.io/ipedrazas/drone-helm
   labels:
     - deploy
     - kubernetes
