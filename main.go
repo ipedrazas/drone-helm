@@ -21,27 +21,42 @@ func main() {
 		cli.StringSliceFlag{
 			Name:   "helm_command",
 			Usage:  "add the command Helm has to execute",
-			EnvVar: "PLUGIN_HELM_COMMAND",
+			EnvVar: "PLUGIN_HELM_COMMAND,HELM_COMMAND",
 		},
 		cli.StringFlag{
 			Name:   "api_server",
 			Usage:  "Api Server url",
-			EnvVar: "PLUGIN_API_SERVER",
+			EnvVar: "PLUGIN_API_SERVER,API_SERVER",
 		},
 		cli.StringFlag{
 			Name:   "token",
 			Usage:  "Kubernetes Token",
-			EnvVar: "PLUGIN_TOKEN",
+			EnvVar: "PLUGIN_TOKEN,KUBERNETES_TOKEN",
 		},
 		cli.StringFlag{
 			Name:   "namespace",
 			Usage:  "Kubernetes namespace",
-			EnvVar: "PLUGIN_NAMESPACE",
+			EnvVar: "PLUGIN_NAMESPACE,NAMESPACE",
+		},
+		cli.StringFlag{
+			Name:   "release",
+			Usage:  "Kubernetes helm release",
+			EnvVar: "PLUGIN_RELEASE,RELEASE",
+		},
+		cli.StringFlag{
+			Name:   "chart",
+			Usage:  "Kubernetes helm release",
+			EnvVar: "PLUGIN_CHART,CHART",
+		},
+		cli.StringFlag{
+			Name:   "values",
+			Usage:  "Kubernetes helm release",
+			EnvVar: "PLUGIN_VALUES,VALUES",
 		},
 		cli.BoolFlag{
 			Name:   "skip_tls_verify",
 			Usage:  "Skip TLS verification",
-			EnvVar: "PLUGIN_SKIP_TLS_VERIFY",
+			EnvVar: "PLUGIN_SKIP_TLS_VERIFY,SKIP_TLS_VERIFY",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -60,7 +75,17 @@ func run(c *cli.Context) error {
 			HelmCommand:   c.StringSlice("helm_command"),
 			Namespace:     c.String("namespace"),
 			SkipTLSVerify: c.Bool("skip_tls_verify"),
+			Values:        c.String("values"),
+			Release:       c.String("release"),
+			Chart:         c.String("chart"),
 		},
 	}
+	debug()
 	return plugin.Exec()
+}
+
+func debug() {
+	for _, e := range os.Environ() {
+		fmt.Println(e)
+	}
 }

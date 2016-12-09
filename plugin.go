@@ -21,6 +21,9 @@ type (
 		HelmCommand   []string `json:"helm_command"`
 		SkipTLSVerify bool     `json:"tls_skip_verify"`
 		Namespace     string   `json:"namespace"`
+		Release       string   `json:"release"`
+		Chart         string   `json:"chart"`
+		Values        string   `json:"values"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -44,16 +47,25 @@ func (p Plugin) Exec() error {
 	if err != nil {
 		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
 	}
-	cmd := p.Config.HelmCommand
-	err = runCommand(cmd)
+	upgrade := make([]string, 7)
+	upgrade[0] = "upgrade"
+	upgrade[1] = "--install"
+	upgrade[2] = p.Config.Release
+	upgrade[3] = p.Config.Chart
+	upgrade[4] = "--debug"
+	if p.Config.Values != "" {
+		upgrade[5] = "--set"
+		upgrade[6] = p.Config.Values
+	}
+
+	err = runCommand(upgrade)
 	if err != nil {
-		return fmt.Errorf("Error running helm comand: " + strings.Join(cmd[:], " "))
+		return fmt.Errorf("Error running helm comand: " + strings.Join(upgrade[:], " "))
 	}
 	return nil
 }
 
 func initialiseKubeconfig(params *Config, source string, target string) error {
-	fmt.Println(params)
 	t, _ := template.ParseFiles(source)
 	f, err := os.Create(target)
 	err = t.Execute(f, params)
