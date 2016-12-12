@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"io/ioutil"
+	"strings"
 	"testing"
 )
 
@@ -21,7 +22,20 @@ func TestInitialiseKubeconfig(t *testing.T) {
 		},
 	}
 
-	initialiseKubeconfig(&plugin.Config, "kubeconfig", "config3.test")
+	configfile := "config3.test"
+	initialiseKubeconfig(&plugin.Config, "kubeconfig", configfile)
+	data, err := ioutil.ReadFile(configfile)
+	if err != nil {
+		t.Errorf("Error reading file %v", err)
+	}
+	kubeConfigStr := string(data)
+
+	if !strings.Contains(kubeConfigStr, "secret-token") {
+		t.Errorf("Kubeconfig doesn't render token")
+	}
+	if !strings.Contains(kubeConfigStr, "http://myapiserver") {
+		t.Errorf("Kubeconfig doesn't render APIServer")
+	}
 
 }
 
@@ -40,6 +54,9 @@ func TestGetHelmCommand(t *testing.T) {
 		},
 	}
 	setHelmCommand(plugin)
-	fmt.Println(plugin.Config.HelmCommand)
-
+	res := strings.Join(plugin.Config.HelmCommand[:], " ")
+	expected := "upgrade --install test-release ./chart/test --debug --dry-run"
+	if res != expected {
+		t.Errorf("Result is %s and we expected %s", res, expected)
+	}
 }
