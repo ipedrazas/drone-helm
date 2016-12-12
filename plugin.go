@@ -71,8 +71,9 @@ func (p *Plugin) Exec() error {
 	if err != nil {
 		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
 	}
+	setHelmCommand(p)
 	if p.Config.Debug {
-		log.Println("helm comand: " + strings.Join(init[:], " "))
+		log.Println("helm comand: " + strings.Join(p.Config.HelmCommand[:], " "))
 	}
 	err = runCommand(p.Config.HelmCommand)
 	if err != nil {

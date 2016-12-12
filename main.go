@@ -88,6 +88,8 @@ func run(c *cli.Context) error {
 			Values:        c.String("values"),
 			Release:       c.String("release"),
 			Chart:         c.String("chart"),
+			Debug:         c.Bool("debug"),
+			DryRun:        c.Bool("dry-run"),
 		},
 	}
 	if plugin.Config.Debug {
