@@ -56,7 +56,7 @@ func TestGetHelmCommand(t *testing.T) {
 	}
 	setHelmCommand(plugin)
 	res := strings.Join(plugin.Config.HelmCommand[:], " ")
-	expected := "upgrade --install test-release ./chart/test --debug --set image.tag=v.0.1.0,nameOverride=my-over-app --dry-run"
+	expected := "upgrade --install test-release ./chart/test --set image.tag=v.0.1.0,nameOverride=my-over-app --dry-run --debug"
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
