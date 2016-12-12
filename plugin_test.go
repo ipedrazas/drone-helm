@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestInitialiseKubeconfig(t *testing.T) {
 
@@ -19,5 +22,24 @@ func TestInitialiseKubeconfig(t *testing.T) {
 	}
 
 	initialiseKubeconfig(&plugin.Config, "kubeconfig", "config3.test")
+
+}
+
+func TestGetHelmCommand(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Token:         "secret-token",
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+		},
+	}
+	setHelmCommand(plugin)
+	fmt.Println(plugin.Config.HelmCommand)
 
 }

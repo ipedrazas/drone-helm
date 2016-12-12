@@ -58,6 +58,16 @@ func main() {
 			Usage:  "Skip TLS verification",
 			EnvVar: "PLUGIN_SKIP_TLS_VERIFY,SKIP_TLS_VERIFY",
 		},
+		cli.BoolFlag{
+			Name:   "debug",
+			Usage:  "Debug",
+			EnvVar: "PLUGIN_DEBUG,DEBUG",
+		},
+		cli.BoolFlag{
+			Name:   "dry-run",
+			Usage:  "Helm dry-run",
+			EnvVar: "PLUGIN_DRY_RUN,DRY_RUN",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)

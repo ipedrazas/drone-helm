@@ -24,6 +24,8 @@ type (
 		Release       string   `json:"release"`
 		Chart         string   `json:"chart"`
 		Values        string   `json:"values"`
+		Debug         bool     `json:"debug"`
+		DryRun        bool     `json:"dry_run"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -31,8 +33,29 @@ type (
 	}
 )
 
+func setHelmCommand(p *Plugin) {
+	upgrade := make([]string, 2)
+	upgrade[0] = "upgrade"
+	upgrade[1] = "--install"
+	if p.Config.Release != "" {
+		upgrade = append(upgrade, p.Config.Release)
+	}
+	upgrade = append(upgrade, p.Config.Chart)
+	if p.Config.Debug {
+		upgrade = append(upgrade, "--debug")
+	}
+	if p.Config.Values != "" {
+		upgrade = append(upgrade, "--set")
+		upgrade = append(upgrade, p.Config.Values)
+	}
+	if p.Config.DryRun {
+		upgrade = append(upgrade, "--dry-run")
+	}
+	p.Config.HelmCommand = upgrade
+}
+
 // Exec default method
-func (p Plugin) Exec() error {
+func (p *Plugin) Exec() error {
 	if p.Config.APIServer == "" {
 		return fmt.Errorf("Error: API Server is needed to deploy.")
 	}
@@ -47,20 +70,9 @@ func (p Plugin) Exec() error {
 	if err != nil {
 		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
 	}
-	upgrade := make([]string, 7)
-	upgrade[0] = "upgrade"
-	upgrade[1] = "--install"
-	upgrade[2] = p.Config.Release
-	upgrade[3] = p.Config.Chart
-	upgrade[4] = "--debug"
-	if p.Config.Values != "" {
-		upgrade[5] = "--set"
-		upgrade[6] = p.Config.Values
-	}
-
-	err = runCommand(upgrade)
+	err = runCommand(p.Config.HelmCommand)
 	if err != nil {
-		return fmt.Errorf("Error running helm comand: " + strings.Join(upgrade[:], " "))
+		return fmt.Errorf("Error running helm comand: " + strings.Join(p.Config.HelmCommand[:], " "))
 	}
 	return nil
 }
