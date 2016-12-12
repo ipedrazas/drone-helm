@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -41,15 +42,15 @@ func setHelmCommand(p *Plugin) {
 		upgrade = append(upgrade, p.Config.Release)
 	}
 	upgrade = append(upgrade, p.Config.Chart)
-	if p.Config.Debug {
-		upgrade = append(upgrade, "--debug")
-	}
 	if p.Config.Values != "" {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, p.Config.Values)
 	}
 	if p.Config.DryRun {
 		upgrade = append(upgrade, "--dry-run")
+	}
+	if p.Config.Debug {
+		upgrade = append(upgrade, "--debug")
 	}
 	p.Config.HelmCommand = upgrade
 }
@@ -69,6 +70,9 @@ func (p *Plugin) Exec() error {
 	err := runCommand(init)
 	if err != nil {
 		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
+	}
+	if p.Config.Debug {
+		log.Println("helm comand: " + strings.Join(init[:], " "))
 	}
 	err = runCommand(p.Config.HelmCommand)
 	if err != nil {

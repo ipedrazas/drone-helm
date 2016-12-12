@@ -90,7 +90,11 @@ func run(c *cli.Context) error {
 			Chart:         c.String("chart"),
 		},
 	}
-	debug()
+	if plugin.Config.Debug {
+		// debug env vars
+		debug()
+	}
+
 	return plugin.Exec()
 }
 

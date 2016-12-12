@@ -36,11 +36,12 @@ To test the plugin, you can run `minikube` and just run the docker image as foll
 
 
         docker run --rm \
-        -e PLUGIN_HELM_COMMAND="install --name my-release stable/jenkins --debug --dry-run" \
         -e PLUGIN_API_SERVER=https://192.168.64.5:8443 \
         -e PLUGIN_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ld..." \
         -e PLUGIN_NAMESPACE=default \
         -e PLUGIN_SKIP_TLS_VERIFY=true \
+        -e PLUGIN_RELEASE=my-release \
+        -e PLUGIMN_CHART=stable/jenkins \
         quay.io/ipedrazas/drone-helm
 
 
