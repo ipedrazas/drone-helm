@@ -23,6 +23,14 @@ pipeline:
       - docker tag image quay.io/ipedrazas/drone-helm:latest
       - docker tag image quay.io/ipedrazas/drone-helm:${TAG}
       - docker push quay.io/ipedrazas/drone-helm
+  
+  slack:
+    image: plugins/slack
+    channel: deploys
+    username: drone
+    template: >
+      {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
+
         
 services:
   dind:
