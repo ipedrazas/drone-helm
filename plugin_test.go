@@ -83,7 +83,7 @@ func TestResolveSecrets(t *testing.T) {
 			DryRun:        true,
 			Chart:         "./chart/test",
 			Release:       "test-release",
-			Values:        "image.tag=${TAG},api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+			Values:        "image.tag=TAG,api=API_SERVER,nameOverride=my-over-app,second.tag=TAG",
 			Secrets:       secrets,
 		},
 	}
