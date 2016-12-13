@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -60,4 +61,45 @@ func TestGetHelmCommand(t *testing.T) {
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
+}
+
+func TestResolveSecrets(t *testing.T) {
+	secrets := make([]string, 2)
+	secrets[0] = "TAG"
+	secrets[1] = "API_SERVER"
+	tag := "v0.1.1"
+	api := "http://apiserver"
+	os.Setenv("TAG", tag)
+	os.Setenv("API_SERVER", api)
+
+	plugin := &Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Token:         "secret-token",
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Values:        "image.tag=${TAG},api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+			Secrets:       secrets,
+		},
+	}
+
+	resolveSecrets(plugin)
+	// test that the subsitution works
+	if !strings.Contains(plugin.Config.Values, tag) {
+		t.Errorf("env var %s not resolved %s", secrets[0], tag)
+	}
+	// test that subistutes more than 1 envvar
+	if strings.Contains(plugin.Config.Values, secrets[0]) {
+		t.Errorf("env var %s not resolved %s", secrets[0], tag)
+	}
+	// // test that the subsitution works with more than one envvar
+	if strings.Contains(plugin.Config.Values, secrets[1]) {
+		t.Errorf("env var %s not resolved %s", secrets[1], api)
+	}
+
 }

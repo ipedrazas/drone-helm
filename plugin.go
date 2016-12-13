@@ -27,6 +27,7 @@ type (
 		Values        string   `json:"values"`
 		Debug         bool     `json:"debug"`
 		DryRun        bool     `json:"dry_run"`
+		Secrets       []string `json:"secrets"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -99,4 +100,19 @@ func runCommand(params []string) error {
 
 	err := cmd.Run()
 	return err
+}
+
+func resolveSecrets(p *Plugin) {
+	fmt.Printf("len: %d \n", len(p.Config.Secrets))
+	if len(p.Config.Secrets) > 0 {
+		for _, secret := range p.Config.Secrets {
+			fmt.Printf("secret: %s \n", secret)
+			if strings.Contains(p.Config.Values, secret) {
+				envval := os.Getenv(secret)
+				fmt.Printf("secret: %s - %s \n", secret, envval)
+				p.Config.Values = strings.Replace(p.Config.Values, secret, envval, -1)
+			}
+		}
+	}
+	fmt.Println(p)
 }

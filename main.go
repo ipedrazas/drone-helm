@@ -68,6 +68,11 @@ func main() {
 			Usage:  "Helm dry-run",
 			EnvVar: "PLUGIN_DRY_RUN,DRY_RUN",
 		},
+		cli.StringSliceFlag{
+			Name:   "secrets",
+			Usage:  "add the secrets used in the values field",
+			EnvVar: "PLUGIN_SECRETS,SECRETS",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -90,18 +95,27 @@ func run(c *cli.Context) error {
 			Chart:         c.String("chart"),
 			Debug:         c.Bool("debug"),
 			DryRun:        c.Bool("dry-run"),
+			Secrets:       c.StringSlice("secrets"),
 		},
 	}
 	if plugin.Config.Debug {
-		// debug env vars
-		debug()
+		debug(&plugin)
+	}
+	resolveSecrets(&plugin)
+	if plugin.Config.Debug {
+		debug(&plugin)
 	}
 
 	return plugin.Exec()
 }
 
-func debug() {
+func debug(plugin *Plugin) {
+	// debug env vars
 	for _, e := range os.Environ() {
 		fmt.Println(e)
 	}
+	// debug plugin obj
+	fmt.Printf("Api server: %s \n", plugin.Config.APIServer)
+	fmt.Printf("Values: %s \n", plugin.Config.Values)
+	fmt.Printf("Values: %s \n", plugin.Config.Secrets)
 }
