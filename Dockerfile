@@ -4,7 +4,7 @@ MAINTAINER Ivan Pedrazas <ipedrazas@gmail.com>
 
 RUN apk -Uuv add curl bash && rm /var/cache/apk/*
 
-ENV HELM_VERSION v2.0.2
+ENV HELM_VERSION v2.1.0
 ENV FILENAME helm-${HELM_VERSION}-linux-amd64.tar.gz
 ENV KUBECTL v1.4.6
 
