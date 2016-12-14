@@ -51,5 +51,27 @@ To test the plugin, you can run `minikube` and just run the docker image as foll
         quay.io/ipedrazas/drone-helm
 
 
+## Secrets
+
+If you find that you need to put a secret in the `--set` values of your `Helm` command you have to create the drone secret first:
+
+                drone secret add --image=quay.io/ipedrazas/drone-helm \
+                        your-user/your-repo MYSECRET secretvalue
+
+Then you have to define values as 
+
+
+                pipeline:
+                  helm_deploy:
+                    image: quay.io/ipedrazas/drone-helm                    
+                    chart: stable/jenkins
+                    release: my-dear-jenkins
+                    values: webhook.token=MYSECRET
+                    secrets: MYSECRET
+
+You have to do this because from 0.5 version fo Drone, secrets are not expanded in plugins. This means that there's
+no possibility of passing secret parameters as part of a value to the plugin.
+
+This is a limitation of Drone. to overcome that problem, we define the `SECRETS` and the plugin will resolve them
 
 Happy Helming!
