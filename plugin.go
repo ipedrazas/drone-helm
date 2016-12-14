@@ -108,6 +108,7 @@ func resolveSecrets(p *Plugin) {
 			envval := os.Getenv(secret)
 			p.Config.Values = resolveEnvVar(p.Config.Values, secret, envval)
 			p.Config.APIServer = resolveEnvVar(p.Config.APIServer, secret, envval)
+			p.Config.Token = resolveEnvVar(p.Config.Token, secret, envval)
 		}
 	}
 }
