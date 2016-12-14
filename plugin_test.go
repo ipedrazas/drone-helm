@@ -74,7 +74,7 @@ func TestResolveSecrets(t *testing.T) {
 
 	plugin := &Plugin{
 		Config: Config{
-			APIServer:     "http://myapiserver",
+			APIServer:     "${API_SERVER}",
 			Token:         "secret-token",
 			HelmCommand:   nil,
 			Namespace:     "default",
@@ -83,7 +83,7 @@ func TestResolveSecrets(t *testing.T) {
 			DryRun:        true,
 			Chart:         "./chart/test",
 			Release:       "test-release",
-			Values:        "image.tag=TAG,api=API_SERVER,nameOverride=my-over-app,second.tag=TAG",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
 			Secrets:       secrets,
 		},
 	}
@@ -101,5 +101,8 @@ func TestResolveSecrets(t *testing.T) {
 	if strings.Contains(plugin.Config.Values, secrets[1]) {
 		t.Errorf("env var %s not resolved %s", secrets[1], api)
 	}
-
+	// // test that the subsitution works with more than one envvar
+	if strings.Contains(plugin.Config.APIServer, secrets[1]) {
+		t.Errorf("env var %s not resolved %s", secrets[1], api)
+	}
 }

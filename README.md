@@ -66,8 +66,9 @@ Then you have to define values as
                     image: quay.io/ipedrazas/drone-helm                    
                     chart: stable/jenkins
                     release: my-dear-jenkins
-                    values: webhook.token=MYSECRET
-                    secrets: MYSECRET
+                    values: webhook.token=${MYSECRET},webhook.key=$KEY
+                    api_server: ${STAGING_API_SERVER}
+                    secrets: MYSECRET,STAGING_API_SERVER,KEY
 
 You have to do this because from 0.5 version fo Drone, secrets are not expanded in plugins. This means that there's
 no possibility of passing secret parameters as part of a value to the plugin.

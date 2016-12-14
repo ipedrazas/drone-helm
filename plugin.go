@@ -105,10 +105,21 @@ func runCommand(params []string) error {
 func resolveSecrets(p *Plugin) {
 	if len(p.Config.Secrets) > 0 {
 		for _, secret := range p.Config.Secrets {
-			if strings.Contains(p.Config.Values, secret) {
-				envval := os.Getenv(secret)
-				p.Config.Values = strings.Replace(p.Config.Values, secret, envval, -1)
-			}
+			envval := os.Getenv(secret)
+			p.Config.Values = resolveEnvVar(p.Config.Values, secret, envval)
+			p.Config.APIServer = resolveEnvVar(p.Config.APIServer, secret, envval)
 		}
 	}
+}
+
+// this functions checks if $VAR or ${VAR} exists and
+// returns the text with resolved vars
+func resolveEnvVar(key string, envvar string, envval string) string {
+	if strings.Contains(key, "$"+envvar) {
+		key = strings.Replace(key, "$"+envvar, envval, -1)
+	}
+	if strings.Contains(key, "${"+envvar+"}") {
+		key = strings.Replace(key, "${"+envvar+"}", envval, -1)
+	}
+	return key
 }
