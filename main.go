@@ -73,6 +73,11 @@ func main() {
 			Usage:  "add the secrets used in the values field",
 			EnvVar: "PLUGIN_SECRETS,SECRETS",
 		},
+		cli.StringSliceFlag{
+			Name:   "prefix",
+			Usage:  "Prefix for all the secrets",
+			EnvVar: "PLUGIN_PREFIX,PREFIX",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -96,6 +101,7 @@ func run(c *cli.Context) error {
 			Debug:         c.Bool("debug"),
 			DryRun:        c.Bool("dry-run"),
 			Secrets:       c.StringSlice("secrets"),
+			Prefix:        c.String("prefix"),
 		},
 	}
 	if plugin.Config.Debug {

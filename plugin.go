@@ -28,6 +28,7 @@ type (
 		Debug         bool     `json:"debug"`
 		DryRun        bool     `json:"dry_run"`
 		Secrets       []string `json:"secrets"`
+		Prefix        string   `json:"prefix"`
 	}
 	// Plugin default
 	Plugin struct {
