@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/Sirupsen/logrus"
@@ -126,4 +127,9 @@ func debug(plugin *Plugin) {
 	fmt.Printf("Api server: %s \n", plugin.Config.APIServer)
 	fmt.Printf("Values: %s \n", plugin.Config.Values)
 	fmt.Printf("Values: %s \n", plugin.Config.Secrets)
+
+	kubeconfig, _ := ioutil.ReadFile(KUBECONFIG)
+	fmt.Println(string(kubeconfig))
+	config, _ := ioutil.ReadFile(CONFIG)
+	fmt.Println(string(config))
 }

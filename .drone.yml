@@ -27,6 +27,14 @@ pipeline:
      event: [push]
      branch: [master]
   
+  helm_deploy:    
+    image: quay.io/ipedrazas/drone-helm    
+    skip_tls_verify: true
+    chart: stable/redis
+    release: ${DRONE_BRANCH}-drone-helm    
+    api_server: $STAGING_API_SERVER
+    debug: true
+  
   slack:
     image: plugins/slack
     channel: deploys
