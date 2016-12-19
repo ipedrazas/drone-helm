@@ -128,8 +128,13 @@ func debug(plugin *Plugin) {
 	fmt.Printf("Values: %s \n", plugin.Config.Values)
 	fmt.Printf("Values: %s \n", plugin.Config.Secrets)
 
-	kubeconfig, _ := ioutil.ReadFile(KUBECONFIG)
-	fmt.Println(string(kubeconfig))
-	config, _ := ioutil.ReadFile(CONFIG)
-	fmt.Println(string(config))
+	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
+	if err != nil {
+		fmt.Println(string(kubeconfig))
+	}
+	config, err := ioutil.ReadFile(CONFIG)
+	if err != nil {
+		fmt.Println(string(config))
+	}
+
 }
