@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -66,6 +67,11 @@ func (p *Plugin) Exec() error {
 		return fmt.Errorf("Error: Token is needed to deploy.")
 	}
 	initialiseKubeconfig(&p.Config, KUBECONFIG, CONFIG)
+
+	if p.Config.Debug {
+		p.debug()
+	}
+
 	fmt.Println(p)
 	init := make([]string, 1)
 	init[0] = "init"
@@ -124,4 +130,25 @@ func resolveEnvVar(key string, envvar string, envval string) string {
 		key = strings.Replace(key, "${"+envvar+"}", envval, -1)
 	}
 	return key
+}
+
+func (p *Plugin) debug() {
+	// debug env vars
+	for _, e := range os.Environ() {
+		fmt.Println(e)
+	}
+	// debug plugin obj
+	fmt.Printf("Api server: %s \n", p.Config.APIServer)
+	fmt.Printf("Values: %s \n", p.Config.Values)
+	fmt.Printf("Values: %s \n", p.Config.Secrets)
+
+	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
+	if err == nil {
+		fmt.Println(string(kubeconfig))
+	}
+	config, err := ioutil.ReadFile(CONFIG)
+	if err == nil {
+		fmt.Println(string(config))
+	}
+
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/Sirupsen/logrus"
@@ -105,36 +104,7 @@ func run(c *cli.Context) error {
 			Prefix:        c.String("prefix"),
 		},
 	}
-	if plugin.Config.Debug {
-		debug(&plugin)
-	}
-
 	resolveSecrets(&plugin)
 
-	if plugin.Config.Debug {
-		debug(&plugin)
-	}
-
 	return plugin.Exec()
-}
-
-func debug(plugin *Plugin) {
-	// debug env vars
-	for _, e := range os.Environ() {
-		fmt.Println(e)
-	}
-	// debug plugin obj
-	fmt.Printf("Api server: %s \n", plugin.Config.APIServer)
-	fmt.Printf("Values: %s \n", plugin.Config.Values)
-	fmt.Printf("Values: %s \n", plugin.Config.Secrets)
-
-	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
-	if err != nil {
-		fmt.Println(string(kubeconfig))
-	}
-	config, err := ioutil.ReadFile(CONFIG)
-	if err != nil {
-		fmt.Println(string(config))
-	}
-
 }
