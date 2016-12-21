@@ -37,17 +37,16 @@ To test the plugin, you can run `minikube` and just run the docker image as foll
 
         docker run --rm \
         -e PLUGIN_API_SERVER=https://192.168.64.5:8443 \
-        -e PLUGIN_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ld..." \
+        -e PLUGIN_TOKEN="" \
         -e PLUGIN_NAMESPACE=default \
         -e PLUGIN_SKIP_TLS_VERIFY=true \
         -e PLUGIN_RELEASE=my-release \
-        -e PLUGIMN_CHART=stable/jenkins \
+        -e PLUGIMN_CHART=stable/redis \
         -e PLUGIN_VALUES="tag=TAG,api=API" \
         -e PLUGIN_SECRETS=TAG,API \
-        -e TAG=v1.0.1 \
-        -e API=http://myapi \
         -e PLUGIN_DEBUG=true \
         -e PLUGIN_DRY_RUN=true \
+        -e DRONE_BUILD_EVENT=delete \
         quay.io/ipedrazas/drone-helm
 
 
