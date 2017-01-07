@@ -75,8 +75,8 @@ func run(c *cli.Context) error {
 	}
 	plugin := Plugin{
 		Config: Config{
-			APIServer:     c.String("api_server"),
-			Token:         c.String("token"),
+			// APIServer:     c.String("api_server"),
+			// Token:         c.String("token"),
 			HelmCommand:   c.StringSlice("helm_command"),
 			Namespace:     c.String("namespace"),
 			SkipTLSVerify: c.Bool("skip_tls_verify"),
