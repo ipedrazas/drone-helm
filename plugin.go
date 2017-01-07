@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/alecthomas/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
-
-	"github.com/alecthomas/template"
 )
 
 var HELM_BIN = "/bin/helm"
@@ -136,32 +136,40 @@ func runCommand(params []string) error {
 }
 
 func resolveSecrets(p *Plugin) {
-	if len(p.Config.Secrets) > 0 {
-		for _, secret := range p.Config.Secrets {
-			envval := os.Getenv(secret)
-			p.Config.Values = resolveEnvVar(p.Config.Values, secret, envval, p.Config.Prefix)
-			p.Config.APIServer = resolveEnvVar(p.Config.APIServer, secret, envval, p.Config.Prefix)
-			p.Config.Token = resolveEnvVar(p.Config.Token, secret, envval, p.Config.Prefix)
-		}
-	}
+	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix)
+	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix)
+	p.Config.Token = resolveEnvVar("${TOKEN}", p.Config.Prefix)
 }
 
-// if prefix is specified, Vars with prefix will be used
+func getEnvVars(envvars string) [][]string {
+	re := regexp.MustCompile(`\$(\{?(\w+)\}?)\.?`)
+	extracted := re.FindAllStringSubmatch(envvars, -1)
+	return extracted
+}
 
-// regex to get envvars
-// \$(\{?(\w+)\}?)\.?
+func replaceEnvvars(envvars [][]string, prefix string, s string) string {
+	for _, envvar := range envvars {
+		envvarName := envvar[0]
+		envvarKey := envvar[2]
+		envval := os.Getenv(envvarKey)
+		if prefix != "" {
+			envval = os.Getenv(prefix + "_" + envvarKey)
+		}
+
+		if strings.Contains(s, envvarKey) {
+			s = strings.Replace(s, envvarName, envval, -1)
+		}
+	}
+	// fmt.Println(s)
+	return s
+}
 
 // this functions checks if $VAR or ${VAR} exists and
 // returns the text with resolved vars
-func resolveEnvVar(key string, envvar string, envval string, prefix string) string {
-
-	if strings.Contains(key, "$"+envvar) {
-		key = strings.Replace(key, "$"+envvar, envval, -1)
-	}
-	if strings.Contains(key, "${"+envvar+"}") {
-		key = strings.Replace(key, "${"+envvar+"}", envval, -1)
-	}
-	return key
+func resolveEnvVar(key string, prefix string) string {
+	envvars := getEnvVars(key)
+	// fmt.Println(envvars)
+	return replaceEnvvars(envvars, prefix, key)
 }
 
 func (p *Plugin) debug() {

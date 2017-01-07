@@ -19,14 +19,14 @@ pipeline:
       - TAG=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     commands:
       - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
-      - docker build -t image .      
-      - docker tag image quay.io/ipedrazas/drone-helm:latest
+      - docker build -t image .
+      # - docker tag image quay.io/ipedrazas/drone-helm:latest
       - docker tag image quay.io/ipedrazas/drone-helm:${TAG}
       - docker push quay.io/ipedrazas/drone-helm
     when:
      event: [push]
      branch: [master]
-   
+
   slack:
     image: plugins/slack
     channel: deploys
@@ -34,7 +34,7 @@ pipeline:
     template: >
       {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
 
-        
+
 services:
   dind:
     image: docker:1.12-dind
@@ -42,10 +42,10 @@ services:
     command:
       - "-s"
       - "overlay"
-  
+
 plugin:
   name: drone-helm
-  desc: Execute helm to 
+  desc: Execute helm to
   type: deploy
   image: quay.io/ipedrazas/drone-helm
   labels:
