@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -87,8 +86,6 @@ func TestResolveSecrets(t *testing.T) {
 	}
 
 	resolveSecrets(plugin)
-	fmt.Println(plugin.Config.Values)
-	fmt.Println(plugin.Config.APIServer)
 	// test that the subsitution works
 	if !strings.Contains(plugin.Config.Values, tag) {
 		t.Errorf("env var ${TAG} not resolved %s", tag)
