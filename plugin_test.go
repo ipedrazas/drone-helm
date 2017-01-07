@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -41,6 +42,7 @@ func TestInitialiseKubeconfig(t *testing.T) {
 }
 
 func TestGetHelmCommand(t *testing.T) {
+	os.Setenv("DRONE_BUILD_EVENT", "push")
 	plugin := &Plugin{
 		Config: Config{
 			APIServer:     "http://myapiserver",
@@ -57,8 +59,9 @@ func TestGetHelmCommand(t *testing.T) {
 	}
 	setHelmCommand(plugin)
 	res := strings.Join(plugin.Config.HelmCommand[:], " ")
-	expected := ""
-	// expected := "upgrade --install test-release ./chart/test --set image.tag=v.0.1.0,nameOverride=my-over-app --dry-run --debug"
+	expected := "upgrade --install test-release ./chart/test --set image.tag=v.0.1.0,nameOverride=my-over-app --dry-run --debug"
+	fmt.Println(res)
+	fmt.Println(expected)
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
