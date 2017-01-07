@@ -147,6 +147,11 @@ func getEnvVars(envvars string) [][]string {
 	return extracted
 }
 
+func resolveEnvVar(key string, prefix string) string {
+	envvars := getEnvVars(key)
+	return replaceEnvvars(envvars, prefix, key)
+}
+
 func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
@@ -160,16 +165,7 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
 	}
-	// fmt.Println(s)
 	return s
-}
-
-// this functions checks if $VAR or ${VAR} exists and
-// returns the text with resolved vars
-func resolveEnvVar(key string, prefix string) string {
-	envvars := getEnvVars(key)
-	// fmt.Println(envvars)
-	return replaceEnvvars(envvars, prefix, key)
 }
 
 func (p *Plugin) debug() {

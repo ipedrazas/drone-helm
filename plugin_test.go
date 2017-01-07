@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -60,8 +59,6 @@ func TestGetHelmCommand(t *testing.T) {
 	setHelmCommand(plugin)
 	res := strings.Join(plugin.Config.HelmCommand[:], " ")
 	expected := "upgrade --install test-release ./chart/test --set image.tag=v.0.1.0,nameOverride=my-over-app --dry-run --debug"
-	fmt.Println(res)
-	fmt.Println(expected)
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
@@ -124,5 +121,25 @@ func TestReplaceEnvvars(t *testing.T) {
 	resolved := replaceEnvvars(result, prefix, testText)
 	if !strings.Contains(resolved, tag) {
 		t.Errorf("EnvVar MY_TAG no replaced by %s ", tag)
+	}
+}
+
+func TestSetHelmHelp(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+		},
+	}
+	setHelmHelp(plugin)
+	if plugin.Config.HelmCommand == nil {
+		t.Error("Helm help is not displayed")
 	}
 }
