@@ -156,15 +156,16 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
-		if prefix != "" {
-			envvarKey = os.Getenv(prefix + "_" + envvarKey)
-		}
 		envval := os.Getenv(envvarKey)
-		fmt.Printf("Replacing %s in %s by %s stored as %s", envvarName, s, envval, envvarKey)
+		if prefix != "" {
+			envval = os.Getenv(prefix + "_" + envvarKey)
+		}
+
 		if strings.Contains(s, envvarKey) {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
 	}
+	// fmt.Println(s)
 	return s
 }
 
