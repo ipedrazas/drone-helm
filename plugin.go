@@ -85,7 +85,7 @@ func setHelmCommand(p *Plugin) {
 
 // Exec default method
 func (p *Plugin) Exec() error {
-
+	resolveSecrets(p)
 	if p.Config.APIServer == "" {
 		return fmt.Errorf("Error: API Server is needed to deploy.")
 	}
@@ -153,6 +153,9 @@ func resolveEnvVar(key string, prefix string) string {
 }
 
 func replaceEnvvars(envvars [][]string, prefix string, s string) string {
+	fmt.Println(envvars)
+	fmt.Println(prefix)
+	fmt.Println(s)
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
