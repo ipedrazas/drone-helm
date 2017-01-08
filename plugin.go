@@ -161,12 +161,12 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
-		envval := os.Getenv(envvarKey)
-		fmt.Printf("Envval %s\n", envval)
+		fmt.Printf("Envval %s\n using key: %s \n", envval, envvarKey)
 		if prefix != "" {
-			envval = os.Getenv(prefix + "_" + envvarKey)
+			envvarKey = prefix + "_" + envvarKey
 		}
-		fmt.Printf("Envval %s\n", envval)
+		envval := os.Getenv(envvarKey)
+		fmt.Printf("Envval %s\n using key: %s \n", envval, envvarKey)
 		fmt.Printf("Replacing %s by %s in --%s-- using var as %s\n", envvarName, envval, s, envvarName)
 		if strings.Contains(s, envvarKey) {
 			s = strings.Replace(s, envvarName, envval, -1)
@@ -180,7 +180,7 @@ func (p *Plugin) debug() {
 	fmt.Println(p)
 	// debug env vars
 	for _, e := range os.Environ() {
-		fmt.Println(e)
+		fmt.Println("-Var:--", e)
 	}
 	// debug plugin obj
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
