@@ -165,7 +165,7 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
 	}
-	// fmt.Println(s)
+	fmt.Println(s)
 	return s
 }
 
