@@ -161,7 +161,6 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
-		fmt.Printf("Envval %s\n using key: %s \n", envval, envvarKey)
 		if prefix != "" {
 			envvarKey = prefix + "_" + envvarKey
 		}
