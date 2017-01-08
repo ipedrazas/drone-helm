@@ -58,7 +58,7 @@ func main() {
 			Usage:  "Helm dry-run",
 			EnvVar: "PLUGIN_DRY_RUN,DRY_RUN",
 		},
-		cli.StringSliceFlag{
+		cli.StringFlag{
 			Name:   "prefix",
 			Usage:  "Prefix for all the secrets",
 			EnvVar: "PLUGIN_PREFIX,PREFIX",
