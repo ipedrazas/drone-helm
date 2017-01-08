@@ -141,6 +141,7 @@ func resolveSecrets(p *Plugin) {
 	p.Config.Token = resolveEnvVar("${TOKEN}", p.Config.Prefix)
 }
 
+// getEnvVars will return [${TAG} {TAG} TAG]
 func getEnvVars(envvars string) [][]string {
 	re := regexp.MustCompile(`\$(\{?(\w+)\}?)\.?`)
 	extracted := re.FindAllStringSubmatch(envvars, -1)
@@ -159,15 +160,17 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	fmt.Println(s)
 	fmt.Println("--------")
 	for _, envvar := range envvars {
+		// [${TAG} {TAG} TAG]
+		fmt.Println(envvar)
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
 		if prefix != "" {
 			envvarKey = prefix + "_" + envvarKey
 		}
 		envval := os.Getenv(envvarKey)
-		fmt.Printf("Envval %s\n using key: %s \n", envval, envvarKey)
-		fmt.Printf("Replacing %s by %s in --%s-- using var as %s\n", envvarName, envval, s, envvarName)
-		if strings.Contains(s, envvarKey) {
+		fmt.Printf("Envval %s using key: %s \n", envval, envvarKey)
+		fmt.Printf("Replacing %s by %s in --%s-- using envvar as %s\n with value: %s", envvarName, envval, s, envvarKey, envval)
+		if strings.Contains(s, envvarName) {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
 	}
