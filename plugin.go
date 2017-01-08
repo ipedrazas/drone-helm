@@ -153,18 +153,21 @@ func resolveEnvVar(key string, prefix string) string {
 }
 
 func replaceEnvvars(envvars [][]string, prefix string, s string) string {
+	fmt.Println("--- params passed to replaceEnvvars ----")
 	fmt.Println(envvars)
 	fmt.Println(prefix)
 	fmt.Println(s)
+	fmt.Println("--------")
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
 		envval := os.Getenv(envvarKey)
+		fmt.Printf("Envval %s\n", envval)
 		if prefix != "" {
 			envval = os.Getenv(prefix + "_" + envvarKey)
 		}
-		fmt.Println(envval)
-		fmt.Println(envvarKey)
+		fmt.Printf("Envval %s\n", envval)
+		fmt.Printf("Replacing %s by %s in --%s-- using var as %s\n", envvarName, envval, s, envvarName)
 		if strings.Contains(s, envvarKey) {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
