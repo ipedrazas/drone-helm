@@ -41,6 +41,7 @@ func TestInitialiseKubeconfig(t *testing.T) {
 }
 
 func TestGetHelmCommand(t *testing.T) {
+	os.Setenv("DRONE_BUILD_EVENT", "push")
 	plugin := &Plugin{
 		Config: Config{
 			APIServer:     "http://myapiserver",
@@ -64,18 +65,14 @@ func TestGetHelmCommand(t *testing.T) {
 }
 
 func TestResolveSecrets(t *testing.T) {
-	secrets := make([]string, 2)
-	secrets[0] = "TAG"
-	secrets[1] = "API_SERVER"
 	tag := "v0.1.1"
 	api := "http://apiserver"
-	os.Setenv("TAG", tag)
-	os.Setenv("API_SERVER", api)
+	os.Setenv("MY_TAG", tag)
+	os.Setenv("MY_API_SERVER", api)
+	os.Setenv("MY_TOKEN", "12345")
 
 	plugin := &Plugin{
 		Config: Config{
-			APIServer:     "${API_SERVER}",
-			Token:         "secret-token",
 			HelmCommand:   nil,
 			Namespace:     "default",
 			SkipTLSVerify: true,
@@ -83,26 +80,66 @@ func TestResolveSecrets(t *testing.T) {
 			DryRun:        true,
 			Chart:         "./chart/test",
 			Release:       "test-release",
+			Prefix:        "MY",
 			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
-			Secrets:       secrets,
 		},
 	}
 
 	resolveSecrets(plugin)
 	// test that the subsitution works
 	if !strings.Contains(plugin.Config.Values, tag) {
-		t.Errorf("env var %s not resolved %s", secrets[0], tag)
+		t.Errorf("env var ${TAG} not resolved %s", tag)
 	}
-	// test that subistutes more than 1 envvar
-	if strings.Contains(plugin.Config.Values, secrets[0]) {
-		t.Errorf("env var %s not resolved %s", secrets[0], tag)
+	if strings.Contains(plugin.Config.Values, "${TAG}") {
+		t.Errorf("env var ${TAG} not resolved %s", tag)
 	}
-	// // test that the subsitution works with more than one envvar
-	if strings.Contains(plugin.Config.Values, secrets[1]) {
-		t.Errorf("env var %s not resolved %s", secrets[1], api)
+
+	if plugin.Config.APIServer != api {
+		t.Errorf("env var ${API_SERVER} not resolved %s", api)
 	}
-	// // test that the subsitution works with more than one envvar
-	if strings.Contains(plugin.Config.APIServer, secrets[1]) {
-		t.Errorf("env var %s not resolved %s", secrets[1], api)
+}
+
+func TestGetEnvVars(t *testing.T) {
+
+	testText := "this should be ${TAG} now"
+	result := getEnvVars(testText)
+	if len(result) == 0 {
+		t.Error("No envvar was found")
+	}
+	envvar := result[0]
+	if !strings.Contains(envvar[2], "TAG") {
+		t.Errorf("envvar not found in %s", testText)
+	}
+}
+
+func TestReplaceEnvvars(t *testing.T) {
+	tag := "tagged"
+	os.Setenv("MY_TAG", tag)
+	prefix := "MY"
+	testText := "this should be ${TAG} now ${TAG}"
+	result := getEnvVars(testText)
+	resolved := replaceEnvvars(result, prefix, testText)
+	if !strings.Contains(resolved, tag) {
+		t.Errorf("EnvVar MY_TAG no replaced by %s  -- %s \n", tag, resolved)
+	}
+}
+
+func TestSetHelmHelp(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+		},
+	}
+	setHelmHelp(plugin)
+	if plugin.Config.HelmCommand == nil {
+		t.Error("Helm help is not displayed")
 	}
 }

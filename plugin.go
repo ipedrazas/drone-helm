@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/alecthomas/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
-
-	"github.com/alecthomas/template"
 )
 
 var HELM_BIN = "/bin/helm"
@@ -37,7 +37,18 @@ type (
 	}
 )
 
-func setHelmCommand(p *Plugin) {
+func setHelmHelp(p *Plugin) {
+	p.Config.HelmCommand = []string{""}
+}
+func setDeleteEventCommand(p *Plugin) {
+	upgrade := make([]string, 2)
+	upgrade[0] = "delete"
+	upgrade[1] = p.Config.Release
+
+	p.Config.HelmCommand = upgrade
+}
+
+func setPushEventCommand(p *Plugin) {
 	upgrade := make([]string, 2)
 	upgrade[0] = "upgrade"
 	upgrade[1] = "--install"
@@ -56,10 +67,25 @@ func setHelmCommand(p *Plugin) {
 		upgrade = append(upgrade, "--debug")
 	}
 	p.Config.HelmCommand = upgrade
+
+}
+
+func setHelmCommand(p *Plugin) {
+	buildEvent := os.Getenv("DRONE_BUILD_EVENT")
+	switch buildEvent {
+	case "push":
+		setPushEventCommand(p)
+	case "delete":
+		setDeleteEventCommand(p)
+	default:
+		setHelmHelp(p)
+	}
+
 }
 
 // Exec default method
 func (p *Plugin) Exec() error {
+	resolveSecrets(p)
 	if p.Config.APIServer == "" {
 		return fmt.Errorf("Error: API Server is needed to deploy.")
 	}
@@ -72,13 +98,13 @@ func (p *Plugin) Exec() error {
 		p.debug()
 	}
 
-	fmt.Println(p)
 	init := make([]string, 1)
 	init[0] = "init"
 	err := runCommand(init)
 	if err != nil {
 		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
 	}
+
 	setHelmCommand(p)
 	if p.Config.Debug {
 		log.Println("helm comand: " + strings.Join(p.Config.HelmCommand[:], " "))
@@ -110,32 +136,44 @@ func runCommand(params []string) error {
 }
 
 func resolveSecrets(p *Plugin) {
-	if len(p.Config.Secrets) > 0 {
-		for _, secret := range p.Config.Secrets {
-			envval := os.Getenv(secret)
-			p.Config.Values = resolveEnvVar(p.Config.Values, secret, envval)
-			p.Config.APIServer = resolveEnvVar(p.Config.APIServer, secret, envval)
-			p.Config.Token = resolveEnvVar(p.Config.Token, secret, envval)
-		}
-	}
+	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix)
+	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix)
+	p.Config.Token = resolveEnvVar("${TOKEN}", p.Config.Prefix)
 }
 
-// this functions checks if $VAR or ${VAR} exists and
-// returns the text with resolved vars
-func resolveEnvVar(key string, envvar string, envval string) string {
-	if strings.Contains(key, "$"+envvar) {
-		key = strings.Replace(key, "$"+envvar, envval, -1)
+// getEnvVars will return [${TAG} {TAG} TAG]
+func getEnvVars(envvars string) [][]string {
+	re := regexp.MustCompile(`\$(\{?(\w+)\}?)\.?`)
+	extracted := re.FindAllStringSubmatch(envvars, -1)
+	return extracted
+}
+
+func resolveEnvVar(key string, prefix string) string {
+	envvars := getEnvVars(key)
+	return replaceEnvvars(envvars, prefix, key)
+}
+
+func replaceEnvvars(envvars [][]string, prefix string, s string) string {
+	for _, envvar := range envvars {
+		// [${TAG} {TAG} TAG]
+		envvarName := envvar[0]
+		envvarKey := envvar[2]
+		if prefix != "" {
+			envvarKey = prefix + "_" + envvarKey
+		}
+		envval := os.Getenv(envvarKey)
+		if strings.Contains(s, envvarName) {
+			s = strings.Replace(s, envvarName, envval, -1)
+		}
 	}
-	if strings.Contains(key, "${"+envvar+"}") {
-		key = strings.Replace(key, "${"+envvar+"}", envval, -1)
-	}
-	return key
+	return s
 }
 
 func (p *Plugin) debug() {
+	fmt.Println(p)
 	// debug env vars
 	for _, e := range os.Environ() {
-		fmt.Println(e)
+		fmt.Println("-Var:--", e)
 	}
 	// debug plugin obj
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)

@@ -24,16 +24,6 @@ func main() {
 			EnvVar: "PLUGIN_HELM_COMMAND,HELM_COMMAND",
 		},
 		cli.StringFlag{
-			Name:   "api_server",
-			Usage:  "Api Server url",
-			EnvVar: "PLUGIN_API_SERVER,API_SERVER",
-		},
-		cli.StringFlag{
-			Name:   "token",
-			Usage:  "Kubernetes Token",
-			EnvVar: "PLUGIN_TOKEN,KUBERNETES_TOKEN",
-		},
-		cli.StringFlag{
 			Name:   "namespace",
 			Usage:  "Kubernetes namespace",
 			EnvVar: "PLUGIN_NAMESPACE,NAMESPACE",
@@ -68,12 +58,7 @@ func main() {
 			Usage:  "Helm dry-run",
 			EnvVar: "PLUGIN_DRY_RUN,DRY_RUN",
 		},
-		cli.StringSliceFlag{
-			Name:   "secrets",
-			Usage:  "add the secrets used in the values field",
-			EnvVar: "PLUGIN_SECRETS,SECRETS",
-		},
-		cli.StringSliceFlag{
+		cli.StringFlag{
 			Name:   "prefix",
 			Usage:  "Prefix for all the secrets",
 			EnvVar: "PLUGIN_PREFIX,PREFIX",
@@ -105,6 +90,6 @@ func run(c *cli.Context) error {
 		},
 	}
 	resolveSecrets(&plugin)
-
+	plugin.debug()
 	return plugin.Exec()
 }
