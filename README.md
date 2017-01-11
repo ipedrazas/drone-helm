@@ -1,6 +1,6 @@
 # Helm (Kubernetes) plugin for drone.io
 
-[![Build Status](http://drone.sohohousedigital.com/api/badges/ipedrazas/drone-helm/status.svg)](http://drone.sohohousedigital.com/ipedrazas/drone-helm)
+[![Build Status](https://drone.sohohousedigital.com/api/badges/ipedrazas/drone-helm/status.svg)](https://drone.sohohousedigital.com/ipedrazas/drone-helm)
 
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
