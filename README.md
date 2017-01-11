@@ -81,7 +81,20 @@ To test the plugin, you can run `minikube` and just run the docker image as foll
         quay.io/ipedrazas/drone-helm
 
 
-This plugin expects [Tiller](https://github.com/kubernetes/helm/blob/master/docs/architecture.md) to be already installed in the cluster
+This plugin installs [Tiller](https://github.com/kubernetes/helm/blob/master/docs/architecture.md) in the cluster, if you want to specify the namespace where `tiller` ins installed, use the `tiller_ns` attribute.
 
+The following example will install `tiller` in the `operations` namespace:
+
+        pipeline_production:
+            helm_deploy:
+            image: quay.io/ipedrazas/drone-helm
+            skip_tls_verify: true
+            chart: ./charts/my-chart
+            release: ${DRONE_BRANCH}
+            values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+            prefix: PROD
+            tiller_ns: operations
+            when:
+             branch: [master]
 
 Happy Helming!

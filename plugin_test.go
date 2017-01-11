@@ -143,3 +143,27 @@ func TestSetHelmHelp(t *testing.T) {
 		t.Error("Helm help is not displayed")
 	}
 }
+
+func TestDetHelmInit(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+			TillerNs:      "system-test",
+		},
+	}
+	init := doHelmInit(plugin)
+	result := strings.Join(init, " ")
+	expected := "init --tiller-namespace " + plugin.Config.TillerNs
+
+	if expected != result {
+		t.Error("Tiller not installed in proper namespace")
+	}
+}

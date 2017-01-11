@@ -63,6 +63,11 @@ func main() {
 			Usage:  "Prefix for all the secrets",
 			EnvVar: "PLUGIN_PREFIX,PREFIX",
 		},
+		cli.StringFlag{
+			Name:   "tiller-ns",
+			Usage:  "Namespace to install Tiller",
+			EnvVar: "PLUGIN_TILLER_NS,TILLER_NS",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -87,6 +92,7 @@ func run(c *cli.Context) error {
 			DryRun:        c.Bool("dry-run"),
 			Secrets:       c.StringSlice("secrets"),
 			Prefix:        c.String("prefix"),
+			TillerNs:      c.String("tiller_ns"),
 		},
 	}
 	resolveSecrets(&plugin)
