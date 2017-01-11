@@ -138,7 +138,7 @@ func runCommand(params []string) error {
 func resolveSecrets(p *Plugin) {
 	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix)
 	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix)
-	p.Config.Token = resolveEnvVar("${TOKEN}", p.Config.Prefix)
+	p.Config.Token = resolveEnvVar("${KUBERNETES_TOKEN}", p.Config.Prefix)
 }
 
 // getEnvVars will return [${TAG} {TAG} TAG]
@@ -155,7 +155,6 @@ func resolveEnvVar(key string, prefix string) string {
 
 func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
-		// [${TAG} {TAG} TAG]
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
 		if prefix != "" {
