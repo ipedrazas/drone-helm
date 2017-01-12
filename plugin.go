@@ -168,10 +168,10 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
-		if prefix != "" {
-			envvarKey = prefix + "_" + envvarKey
+		envval := os.Getenv(prefix + "_" + envvarKey)
+		if envval == "" {
+			envval = os.Getenv(envvarKey)
 		}
-		envval := os.Getenv(envvarKey)
 		if strings.Contains(s, envvarName) {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
