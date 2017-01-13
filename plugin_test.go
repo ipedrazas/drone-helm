@@ -143,3 +143,66 @@ func TestSetHelmHelp(t *testing.T) {
 		t.Error("Helm help is not displayed")
 	}
 }
+
+func TestDetHelmInit(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+			TillerNs:      "system-test",
+		},
+	}
+	init := doHelmInit(plugin)
+	result := strings.Join(init, " ")
+	expected := "init --tiller-namespace " + plugin.Config.TillerNs
+
+	if expected != result {
+		t.Error("Tiller not installed in proper namespace")
+	}
+}
+
+func TestResolveSecretsFallback(t *testing.T) {
+	tag := "v0.1.1"
+	api := "http://apiserver"
+	os.Setenv("MY_TAG", tag)
+	os.Setenv("MY_API_SERVER", api)
+	os.Setenv("MY_TOKEN", "12345")
+	os.Setenv("NOTTOKEN", "99999")
+
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nottoken=${NOTTOKEN},nameOverride=my-over-app,second.tag=${TAG}",
+		},
+	}
+
+	resolveSecrets(plugin)
+	// test that the subsitution works
+	if !strings.Contains(plugin.Config.Values, tag) {
+		t.Errorf("env var ${TAG} not resolved %s", tag)
+	}
+	if strings.Contains(plugin.Config.Values, "${TAG}") {
+		t.Errorf("env var ${TAG} not resolved %s", tag)
+	}
+
+	if plugin.Config.APIServer != api {
+		t.Errorf("env var ${API_SERVER} not resolved %s", api)
+	}
+	if !strings.Contains(plugin.Config.Values, "99999") {
+		t.Errorf("envar ${NOTTOKEN} has not been resolved to 99999, not using prefix")
+	}
+}

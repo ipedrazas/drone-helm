@@ -30,6 +30,7 @@ type (
 		DryRun        bool     `json:"dry_run"`
 		Secrets       []string `json:"secrets"`
 		Prefix        string   `json:"prefix"`
+		TillerNs      string   `json:"tiller_ns"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -83,6 +84,17 @@ func setHelmCommand(p *Plugin) {
 
 }
 
+func doHelmInit(p *Plugin) []string {
+	init := make([]string, 1)
+	init[0] = "init"
+	if p.Config.TillerNs != "" {
+		init = append(init, "--tiller-namespace")
+		init = append(init, p.Config.TillerNs)
+	}
+	return init
+
+}
+
 // Exec default method
 func (p *Plugin) Exec() error {
 	resolveSecrets(p)
@@ -98,16 +110,15 @@ func (p *Plugin) Exec() error {
 		p.debug()
 	}
 
-	init := make([]string, 1)
-	init[0] = "init"
+	init := doHelmInit(p)
 	err := runCommand(init)
 	if err != nil {
 		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
 	}
-
 	setHelmCommand(p)
+
 	if p.Config.Debug {
-		log.Println("helm comand: " + strings.Join(p.Config.HelmCommand[:], " "))
+		log.Println("helm command: " + strings.Join(p.Config.HelmCommand[:], " "))
 	}
 	err = runCommand(p.Config.HelmCommand)
 	if err != nil {
@@ -157,10 +168,10 @@ func replaceEnvvars(envvars [][]string, prefix string, s string) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
-		if prefix != "" {
-			envvarKey = prefix + "_" + envvarKey
+		envval := os.Getenv(prefix + "_" + envvarKey)
+		if envval == "" {
+			envval = os.Getenv(envvarKey)
 		}
-		envval := os.Getenv(envvarKey)
 		if strings.Contains(s, envvarName) {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
