@@ -2,6 +2,10 @@ workspace:
   base: /go
 
 pipeline:
+  clone:
+    image: plugins/git
+    tags: true
+
   test:
     image: golang:1.6
     environment:
@@ -16,12 +20,11 @@ pipeline:
     image: docker:1.12
     environment:
       - DOCKER_HOST=tcp://127.0.0.1:2375
-      - TAG=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     commands:
       - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
       - docker build -t image .
       - docker tag image quay.io/ipedrazas/drone-helm:latest
-      - docker tag image quay.io/ipedrazas/drone-helm:${TAG}
+      - docker tag image quay.io/ipedrazas/drone-helm:${DRONE_TAG}
       - docker push quay.io/ipedrazas/drone-helm
     # when:
     #  event: [push]
