@@ -58,7 +58,7 @@ pipeline_production:
   prefix: PROD
   debug: true
   when:
-   branch: [master]
+    branch: [master]
 ```
 
 This last block defines how the plugin will deploy
