@@ -53,6 +53,7 @@ func setPushEventCommand(p *Plugin) {
 	upgrade := make([]string, 2)
 	upgrade[0] = "upgrade"
 	upgrade[1] = "--install"
+
 	if p.Config.Release != "" {
 		upgrade = append(upgrade, p.Config.Release)
 	}
@@ -60,6 +61,10 @@ func setPushEventCommand(p *Plugin) {
 	if p.Config.Values != "" {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, p.Config.Values)
+	}
+	if p.Config.Namespace != "" {
+		upgrade = append(upgrade, "--namespace")
+		upgrade = append(upgrade, p.Config.Namespace)
 	}
 	if p.Config.DryRun {
 		upgrade = append(upgrade, "--dry-run")
