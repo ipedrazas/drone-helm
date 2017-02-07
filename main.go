@@ -96,6 +96,8 @@ func run(c *cli.Context) error {
 		},
 	}
 	resolveSecrets(&plugin)
-	plugin.debug()
+	if plugin.Config.Debug {
+		plugin.debug()
+	}
 	return plugin.Exec()
 }
