@@ -96,4 +96,20 @@ pipeline_production:
   when:
     branch: [master]
 ```
+
+There's an option to do a `dry-run` in case you want to verify that the secrets and envvars are replaced correctly. Just add the attribute `dry-run` to true:
+
+```YAML
+pipeline_production:
+  helm_deploy:
+  image: quay.io/ipedrazas/drone-helm
+  skip_tls_verify: true
+  chart: ./charts/my-chart
+  release: ${DRONE_BRANCH}
+  values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+  prefix: STAGING
+  dry-run:true
+  when:
+    branch: [master]
+```
 Happy Helming!
