@@ -102,7 +102,7 @@ func doHelmInit(p *Plugin) []string {
 
 // Exec default method
 func (p *Plugin) Exec() error {
-	resolveSecrets(p)
+	// resolveSecrets(p)
 	if p.Config.APIServer == "" {
 		return fmt.Errorf("Error: API Server is needed to deploy.")
 	}
@@ -149,39 +149,6 @@ func runCommand(params []string) error {
 
 	err := cmd.Run()
 	return err
-}
-
-func resolveSecrets(p *Plugin) {
-	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix)
-	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix)
-	p.Config.Token = resolveEnvVar("${KUBERNETES_TOKEN}", p.Config.Prefix)
-}
-
-// getEnvVars will return [${TAG} {TAG} TAG]
-func getEnvVars(envvars string) [][]string {
-	re := regexp.MustCompile(`\$(\{?(\w+)\}?)\.?`)
-	extracted := re.FindAllStringSubmatch(envvars, -1)
-	return extracted
-}
-
-func resolveEnvVar(key string, prefix string) string {
-	envvars := getEnvVars(key)
-	return replaceEnvvars(envvars, prefix, key)
-}
-
-func replaceEnvvars(envvars [][]string, prefix string, s string) string {
-	for _, envvar := range envvars {
-		envvarName := envvar[0]
-		envvarKey := envvar[2]
-		envval := os.Getenv(prefix + "_" + envvarKey)
-		if envval == "" {
-			envval = os.Getenv(envvarKey)
-		}
-		if strings.Contains(s, envvarName) {
-			s = strings.Replace(s, envvarName, envval, -1)
-		}
-	}
-	return s
 }
 
 func (p *Plugin) debug() {
