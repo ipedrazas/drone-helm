@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"regexp"
+
 	"strings"
 )
 
@@ -102,7 +102,6 @@ func doHelmInit(p *Plugin) []string {
 
 // Exec default method
 func (p *Plugin) Exec() error {
-	// resolveSecrets(p)
 	if p.Config.APIServer == "" {
 		return fmt.Errorf("Error: API Server is needed to deploy.")
 	}

@@ -64,66 +64,6 @@ func TestGetHelmCommand(t *testing.T) {
 	}
 }
 
-func TestResolveSecrets(t *testing.T) {
-	tag := "v0.1.1"
-	api := "http://apiserver"
-	os.Setenv("MY_TAG", tag)
-	os.Setenv("MY_API_SERVER", api)
-	os.Setenv("MY_TOKEN", "12345")
-
-	plugin := &Plugin{
-		Config: Config{
-			HelmCommand:   nil,
-			Namespace:     "default",
-			SkipTLSVerify: true,
-			Debug:         true,
-			DryRun:        true,
-			Chart:         "./chart/test",
-			Release:       "test-release",
-			Prefix:        "MY",
-			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
-		},
-	}
-
-	resolveSecrets(plugin)
-	// test that the subsitution works
-	if !strings.Contains(plugin.Config.Values, tag) {
-		t.Errorf("env var ${TAG} not resolved %s", tag)
-	}
-	if strings.Contains(plugin.Config.Values, "${TAG}") {
-		t.Errorf("env var ${TAG} not resolved %s", tag)
-	}
-
-	if plugin.Config.APIServer != api {
-		t.Errorf("env var ${API_SERVER} not resolved %s", api)
-	}
-}
-
-func TestGetEnvVars(t *testing.T) {
-
-	testText := "this should be ${TAG} now"
-	result := getEnvVars(testText)
-	if len(result) == 0 {
-		t.Error("No envvar was found")
-	}
-	envvar := result[0]
-	if !strings.Contains(envvar[2], "TAG") {
-		t.Errorf("envvar not found in %s", testText)
-	}
-}
-
-func TestReplaceEnvvars(t *testing.T) {
-	tag := "tagged"
-	os.Setenv("MY_TAG", tag)
-	prefix := "MY"
-	testText := "this should be ${TAG} now ${TAG}"
-	result := getEnvVars(testText)
-	resolved := replaceEnvvars(result, prefix, testText)
-	if !strings.Contains(resolved, tag) {
-		t.Errorf("EnvVar MY_TAG no replaced by %s  -- %s \n", tag, resolved)
-	}
-}
-
 func TestSetHelmHelp(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
@@ -165,44 +105,5 @@ func TestDetHelmInit(t *testing.T) {
 
 	if expected != result {
 		t.Error("Tiller not installed in proper namespace")
-	}
-}
-
-func TestResolveSecretsFallback(t *testing.T) {
-	tag := "v0.1.1"
-	api := "http://apiserver"
-	os.Setenv("MY_TAG", tag)
-	os.Setenv("MY_API_SERVER", api)
-	os.Setenv("MY_TOKEN", "12345")
-	os.Setenv("NOTTOKEN", "99999")
-
-	plugin := &Plugin{
-		Config: Config{
-			HelmCommand:   nil,
-			Namespace:     "default",
-			SkipTLSVerify: true,
-			Debug:         true,
-			DryRun:        true,
-			Chart:         "./chart/test",
-			Release:       "test-release",
-			Prefix:        "MY",
-			Values:        "image.tag=$TAG,api=${API_SERVER},nottoken=${NOTTOKEN},nameOverride=my-over-app,second.tag=${TAG}",
-		},
-	}
-
-	resolveSecrets(plugin)
-	// test that the subsitution works
-	if !strings.Contains(plugin.Config.Values, tag) {
-		t.Errorf("env var ${TAG} not resolved %s", tag)
-	}
-	if strings.Contains(plugin.Config.Values, "${TAG}") {
-		t.Errorf("env var ${TAG} not resolved %s", tag)
-	}
-
-	if plugin.Config.APIServer != api {
-		t.Errorf("env var ${API_SERVER} not resolved %s", api)
-	}
-	if !strings.Contains(plugin.Config.Values, "99999") {
-		t.Errorf("envar ${NOTTOKEN} has not been resolved to 99999, not using prefix")
 	}
 }

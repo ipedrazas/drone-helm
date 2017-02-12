@@ -95,7 +95,7 @@ func run(c *cli.Context) error {
 			TillerNs:      c.String("tiller_ns"),
 		},
 	}
-	resolveSecrets(&plugin)
+
 	if plugin.Config.Debug {
 		plugin.debug()
 	}
