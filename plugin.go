@@ -26,7 +26,7 @@ type (
 		Release       string   `json:"release"`
 		Chart         string   `json:"chart"`
 		Values        string   `json:"values"`
-		ValuesFile    string   `json:"values_file"`
+		ValuesFiles   string   `json:"values_files"`
 		Debug         bool     `json:"debug"`
 		DryRun        bool     `json:"dry_run"`
 		Secrets       []string `json:"secrets"`
@@ -63,9 +63,11 @@ func setPushEventCommand(p *Plugin) {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, p.Config.Values)
 	}
-	if p.Config.ValuesFile != "" {
-		upgrade = append(upgrade, "--values")
-		upgrade = append(upgrade, p.Config.ValuesFile)
+	if p.Config.ValuesFiles != "" {
+  	for _, valuesFile := range strings.Split(p.Config.ValuesFiles, ",") {
+      upgrade = append(upgrade, "--values")
+      upgrade = append(upgrade, valuesFile)
+    }
 	}
 	if p.Config.Namespace != "" {
 		upgrade = append(upgrade, "--namespace")
@@ -203,7 +205,7 @@ func (p *Plugin) debug() {
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
 	fmt.Printf("Values: %s \n", p.Config.Values)
 	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
-	fmt.Printf("ValuesFile: %s \n", p.Config.ValuesFile)
+	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)
 
 	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
 	if err == nil {
