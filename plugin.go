@@ -73,10 +73,6 @@ func setPushEventCommand(p *Plugin) {
 		upgrade = append(upgrade, "--namespace")
 		upgrade = append(upgrade, p.Config.Namespace)
 	}
-	if p.Config.TillerNs != "" {
-		upgrade = append(upgrade, "--tiller-namespace")
-		upgrade = append(upgrade, p.Config.TillerNs)
-	}
 	if p.Config.DryRun {
 		upgrade = append(upgrade, "--dry-run")
 	}

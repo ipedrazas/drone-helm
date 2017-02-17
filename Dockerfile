@@ -4,12 +4,7 @@ MAINTAINER Ivan Pedrazas <ipedrazas@gmail.com>
 
 RUN apk -Uuv add curl bash && rm /var/cache/apk/*
 
-#WORKS:
-ENV VERSION v2.2.0
-
-# Does not support the --tiller-namespace option to upgrade command!
-#ENV VERSION v2.1.3
-
+ENV VERSION v2.1.3
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
 ENV KUBECTL v1.5.2
 
