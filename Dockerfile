@@ -4,9 +4,9 @@ MAINTAINER Ivan Pedrazas <ipedrazas@gmail.com>
 
 RUN apk -Uuv add curl bash && rm /var/cache/apk/*
 
-ENV VERSION v2.2.0
+ENV VERSION v2.2.2
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
-ENV KUBECTL v1.5.2
+ENV KUBECTL v1.5.3
 
 ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
 
