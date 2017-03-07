@@ -1,8 +1,9 @@
 # Helm (Kubernetes) plugin for drone.io
 
-[![Build Status](https://drone.sohohousedigital.com/api/badges/ipedrazas/drone-helm/status.svg)](https://drone.sohohousedigital.com/ipedrazas/drone-helm)
-
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
+
+* Current `helm` version: 2.2.2
+* Current `kubectl` version: 1.5.3
 
 For example, this configuration will deploy my-app using a chart located in the repo called `my-chart`
 
@@ -16,6 +17,27 @@ pipeline:
   values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
   prefix: STAGING
   debug: true
+  when:
+    branch: [master]
+```
+
+Values can be passed using the `values_files` key. Use this option to define your values in a set of files
+and pass them to `helm`. This option trigger the `-f` or ``--values`` flag in `helm`:
+
+```
+--values valueFiles   specify values in a YAML file (can specify multiple) (default [])
+```
+
+For example:
+
+```YAML
+pipeline:
+  helm_deploy:
+  image: quay.io/ipedrazas/drone-helm
+  skip_tls_verify: true
+  chart: ./charts/my-chart
+  release: ${DRONE_BRANCH}
+  values_files: ["global-values.yaml", "myenv-values.yaml"]
   when:
     branch: [master]
 ```
