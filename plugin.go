@@ -26,6 +26,7 @@ type (
 		Release       string   `json:"release"`
 		Chart         string   `json:"chart"`
 		Values        string   `json:"values"`
+		ValuesFiles   string   `json:"values_files"`
 		Debug         bool     `json:"debug"`
 		DryRun        bool     `json:"dry_run"`
 		Secrets       []string `json:"secrets"`
@@ -61,6 +62,12 @@ func setPushEventCommand(p *Plugin) {
 	if p.Config.Values != "" {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, p.Config.Values)
+	}
+	if p.Config.ValuesFiles != "" {
+  	for _, valuesFile := range strings.Split(p.Config.ValuesFiles, ",") {
+      upgrade = append(upgrade, "--values")
+      upgrade = append(upgrade, valuesFile)
+    }
 	}
 	if p.Config.Namespace != "" {
 		upgrade = append(upgrade, "--namespace")
@@ -118,7 +125,7 @@ func (p *Plugin) Exec() error {
 	init := doHelmInit(p)
 	err := runCommand(init)
 	if err != nil {
-		return fmt.Errorf("Error running helm comand: " + strings.Join(init[:], " "))
+		return fmt.Errorf("Error running helm command: " + strings.Join(init[:], " "))
 	}
 	setHelmCommand(p)
 
@@ -127,7 +134,7 @@ func (p *Plugin) Exec() error {
 	}
 	err = runCommand(p.Config.HelmCommand)
 	if err != nil {
-		return fmt.Errorf("Error running helm comand: " + strings.Join(p.Config.HelmCommand[:], " "))
+		return fmt.Errorf("Error running helm command: " + strings.Join(p.Config.HelmCommand[:], " "))
 	}
 	return nil
 }
@@ -193,7 +200,8 @@ func (p *Plugin) debug() {
 	// debug plugin obj
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
 	fmt.Printf("Values: %s \n", p.Config.Values)
-	fmt.Printf("Values: %s \n", p.Config.Secrets)
+	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
+	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)
 
 	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
 	if err == nil {
