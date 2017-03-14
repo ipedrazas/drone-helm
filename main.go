@@ -73,6 +73,11 @@ func main() {
 			Usage:  "Namespace to install Tiller",
 			EnvVar: "PLUGIN_TILLER_NS,TILLER_NS",
 		},
+		cli.BoolFlag{
+			Name:   "wait",
+			Usage:  "if set, will wait until all Pods, PVCs, and Services are in a ready state before marking the release as successful.",
+			EnvVar: "PLUGIN_WAIT,WAIT",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -99,6 +104,7 @@ func run(c *cli.Context) error {
 			Secrets:       c.StringSlice("secrets"),
 			Prefix:        c.String("prefix"),
 			TillerNs:      c.String("tiller-ns"),
+			Wait:          c.Bool("wait"),
 		},
 	}
 	resolveSecrets(&plugin)
