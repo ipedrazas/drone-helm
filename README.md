@@ -17,6 +17,7 @@ pipeline:
   values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
   prefix: STAGING
   debug: true
+  wait: true
   when:
     branch: [master]
 ```
@@ -66,6 +67,7 @@ pipeline:
   values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
   prefix: STAGING
   debug: true
+  wait: true
   when:
     branch:
       exclude: [ master ]
@@ -79,6 +81,7 @@ pipeline_production:
   values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
   prefix: PROD
   debug: true
+  wait: true
   when:
     branch: [master]
 ```
