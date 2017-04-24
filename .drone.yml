@@ -1,14 +1,18 @@
 workspace:
   base: /go
+  path: src/github.com/ipedrazas/drone-helm
 
 pipeline:
   test:
     image: golang:1.8
-    environment:
-      - CGO_ENABLED=0
     commands:
       - go get
       - go test -cover -coverprofile=coverage.out
+
+  compile:
+    image: golang:1.8
+    commands:
+      - export PATH=$PATH:/go/bin
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
 
