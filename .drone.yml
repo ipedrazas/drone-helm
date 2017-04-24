@@ -3,7 +3,7 @@ workspace:
 
 pipeline:
   test:
-    image: golang:1.6
+    image: golang:1.8
     environment:
       - CGO_ENABLED=0
     commands:
