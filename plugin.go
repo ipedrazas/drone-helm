@@ -32,6 +32,7 @@ type (
 		Secrets       []string `json:"secrets"`
 		Prefix        string   `json:"prefix"`
 		TillerNs      string   `json:"tiller_ns"`
+		Wait          bool     `json:"wait"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -64,10 +65,10 @@ func setPushEventCommand(p *Plugin) {
 		upgrade = append(upgrade, p.Config.Values)
 	}
 	if p.Config.ValuesFiles != "" {
-  	for _, valuesFile := range strings.Split(p.Config.ValuesFiles, ",") {
-      upgrade = append(upgrade, "--values")
-      upgrade = append(upgrade, valuesFile)
-    }
+		for _, valuesFile := range strings.Split(p.Config.ValuesFiles, ",") {
+			upgrade = append(upgrade, "--values")
+			upgrade = append(upgrade, valuesFile)
+		}
 	}
 	if p.Config.Namespace != "" {
 		upgrade = append(upgrade, "--namespace")
@@ -78,6 +79,9 @@ func setPushEventCommand(p *Plugin) {
 	}
 	if p.Config.Debug {
 		upgrade = append(upgrade, "--debug")
+	}
+	if p.Config.Wait {
+		upgrade = append(upgrade, "--wait")
 	}
 	p.Config.HelmCommand = upgrade
 
