@@ -22,6 +22,20 @@ pipeline:
     branch: [master]
 ```
 
+Last update of Drone expect you to declare the secrets you want to use:
+
+```YAML
+  helm_deploy:
+    image: quay.io/ipedrazas/drone-helm
+    chart: ./chart/blog
+    release: ${DRONE_BRANCH}-blog
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    prefix: PROD
+    secrets: [ prod_api_server, prod_kubernetes_token ]
+    when:
+      branch: [master]
+```
+
 Values can be passed using the `values_files` key. Use this option to define your values in a set of files
 and pass them to `helm`. This option trigger the `-f` or ``--values`` flag in `helm`:
 
