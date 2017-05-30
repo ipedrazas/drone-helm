@@ -78,6 +78,11 @@ func main() {
 			Usage:  "if set, will wait until all Pods, PVCs, and Services are in a ready state before marking the release as successful.",
 			EnvVar: "PLUGIN_WAIT,WAIT",
 		},
+		cli.BoolFlag{
+			Name:   "recreate-pods",
+			Usage:  "performs pods restart for the resource if applicable",
+			EnvVar: "PLUGIN_RECREATE_PODS,RECREATE_PODS",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -105,6 +110,7 @@ func run(c *cli.Context) error {
 			Prefix:        c.String("prefix"),
 			TillerNs:      c.String("tiller-ns"),
 			Wait:          c.Bool("wait"),
+			RecreatePods:  c.Bool("recreate-pods"),
 		},
 	}
 	resolveSecrets(&plugin)

@@ -33,6 +33,7 @@ type (
 		Prefix        string   `json:"prefix"`
 		TillerNs      string   `json:"tiller_ns"`
 		Wait          bool     `json:"wait"`
+		RecreatePods  bool     `json:"recreate_pods"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -82,6 +83,9 @@ func setPushEventCommand(p *Plugin) {
 	}
 	if p.Config.Wait {
 		upgrade = append(upgrade, "--wait")
+	}
+	if p.Config.RecreatePods {
+		upgrade = append(upgrade, "--recreate-pods")
 	}
 	p.Config.HelmCommand = upgrade
 
