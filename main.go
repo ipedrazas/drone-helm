@@ -78,6 +78,16 @@ func main() {
 			Usage:  "if set, will wait until all Pods, PVCs, and Services are in a ready state before marking the release as successful.",
 			EnvVar: "PLUGIN_WAIT,WAIT",
 		},
+		cli.BoolFlag{
+			Name:   "upgrade",
+			Usage:  "if set, will upgrade tiller to the latest version",
+			EnvVar: "PLUGIN_UPGRADE,UPGRADE",
+		},
+		cli.BoolFlag{
+			Name:   "client-only",
+			Usage:  "if set, it will initilises helm in the client side only",
+			EnvVar: "PLUGIN_CLIENT_ONLY,CLIENT_ONLY",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -105,6 +115,8 @@ func run(c *cli.Context) error {
 			Prefix:        c.String("prefix"),
 			TillerNs:      c.String("tiller-ns"),
 			Wait:          c.Bool("wait"),
+			ClientOnly:    c.Bool("client-only"),
+			Upgrade:       c.Bool("upgrade"),
 		},
 	}
 	resolveSecrets(&plugin)

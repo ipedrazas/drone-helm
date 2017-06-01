@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/alecthomas/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/alecthomas/template"
 )
 
 var HELM_BIN = "/bin/helm"
@@ -33,6 +34,8 @@ type (
 		Prefix        string   `json:"prefix"`
 		TillerNs      string   `json:"tiller_ns"`
 		Wait          bool     `json:"wait"`
+		Upgrade       bool     `json:"upgrade"`
+		ClientOnly    bool     `json:"client_only"`
 	}
 	// Plugin default
 	Plugin struct {
