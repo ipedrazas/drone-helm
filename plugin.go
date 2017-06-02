@@ -110,6 +110,13 @@ func doHelmInit(p *Plugin) []string {
 		init = append(init, "--tiller-namespace")
 		init = append(init, p.Config.TillerNs)
 	}
+	if p.Config.ClientOnly {
+		init = append(init, "--client-only")
+	}
+	if p.Config.Upgrade {
+		init = append(init, "--upgrade")
+	}
+
 	return init
 
 }
