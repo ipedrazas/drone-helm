@@ -95,6 +95,10 @@ func setHelmCommand(p *Plugin) {
 	switch buildEvent {
 	case "push":
 		setPushEventCommand(p)
+	case "tag":
+		setPushEventCommand(p)
+	case "deployment":
+		setPushEventCommand(p)
 	case "delete":
 		setDeleteEventCommand(p)
 	default:
