@@ -82,6 +82,16 @@ func main() {
 			Name:   "recreate-pods",
 			Usage:  "performs pods restart for the resource if applicable",
 			EnvVar: "PLUGIN_RECREATE_PODS,RECREATE_PODS",
+    },
+    cli.BoolFlag{
+			Name:   "upgrade",
+			Usage:  "if set, will upgrade tiller to the latest version",
+			EnvVar: "PLUGIN_UPGRADE,UPGRADE",
+		},
+		cli.BoolFlag{
+			Name:   "client-only",
+			Usage:  "if set, it will initilises helm in the client side only",
+			EnvVar: "PLUGIN_CLIENT_ONLY,CLIENT_ONLY",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -111,6 +121,8 @@ func run(c *cli.Context) error {
 			TillerNs:      c.String("tiller-ns"),
 			Wait:          c.Bool("wait"),
 			RecreatePods:  c.Bool("recreate-pods"),
+			ClientOnly:    c.Bool("client-only"),
+			Upgrade:       c.Bool("upgrade"),
 		},
 	}
 	resolveSecrets(&plugin)

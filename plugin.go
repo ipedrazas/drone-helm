@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/alecthomas/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/alecthomas/template"
 )
 
 var HELM_BIN = "/bin/helm"
@@ -34,6 +35,8 @@ type (
 		TillerNs      string   `json:"tiller_ns"`
 		Wait          bool     `json:"wait"`
 		RecreatePods  bool     `json:"recreate_pods"`
+		Upgrade       bool     `json:"upgrade"`
+		ClientOnly    bool     `json:"client_only"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -75,6 +78,10 @@ func setPushEventCommand(p *Plugin) {
 		upgrade = append(upgrade, "--namespace")
 		upgrade = append(upgrade, p.Config.Namespace)
 	}
+	if p.Config.TillerNs != "" {
+		upgrade = append(upgrade, "--tiller-namespace")
+		upgrade = append(upgrade, p.Config.TillerNs)
+	}
 	if p.Config.DryRun {
 		upgrade = append(upgrade, "--dry-run")
 	}
@@ -96,6 +103,10 @@ func setHelmCommand(p *Plugin) {
 	switch buildEvent {
 	case "push":
 		setPushEventCommand(p)
+	case "tag":
+		setPushEventCommand(p)
+	case "deployment":
+		setPushEventCommand(p)
 	case "delete":
 		setDeleteEventCommand(p)
 	default:
@@ -111,6 +122,13 @@ func doHelmInit(p *Plugin) []string {
 		init = append(init, "--tiller-namespace")
 		init = append(init, p.Config.TillerNs)
 	}
+	if p.Config.ClientOnly {
+		init = append(init, "--client-only")
+	}
+	if p.Config.Upgrade {
+		init = append(init, "--upgrade")
+	}
+
 	return init
 
 }
