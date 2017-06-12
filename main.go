@@ -79,6 +79,11 @@ func main() {
 			EnvVar: "PLUGIN_WAIT,WAIT",
 		},
 		cli.BoolFlag{
+			Name:   "recreate-pods",
+			Usage:  "performs pods restart for the resource if applicable",
+			EnvVar: "PLUGIN_RECREATE_PODS,RECREATE_PODS",
+    },
+    cli.BoolFlag{
 			Name:   "upgrade",
 			Usage:  "if set, will upgrade tiller to the latest version",
 			EnvVar: "PLUGIN_UPGRADE,UPGRADE",
@@ -115,6 +120,7 @@ func run(c *cli.Context) error {
 			Prefix:        c.String("prefix"),
 			TillerNs:      c.String("tiller-ns"),
 			Wait:          c.Bool("wait"),
+			RecreatePods:  c.Bool("recreate-pods"),
 			ClientOnly:    c.Bool("client-only"),
 			Upgrade:       c.Bool("upgrade"),
 		},
