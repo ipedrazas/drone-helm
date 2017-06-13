@@ -37,6 +37,7 @@ type (
 		RecreatePods  bool     `json:"recreate_pods"`
 		Upgrade       bool     `json:"upgrade"`
 		ClientOnly    bool     `json:"client_only"`
+		ReuseValues   bool     `json:"reuse_values"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -93,6 +94,9 @@ func setPushEventCommand(p *Plugin) {
 	}
 	if p.Config.RecreatePods {
 		upgrade = append(upgrade, "--recreate-pods")
+	}
+	if p.Config.ReuseValues {
+		upgrade = append(upgrade, "--reuse-values")
 	}
 	p.Config.HelmCommand = upgrade
 
