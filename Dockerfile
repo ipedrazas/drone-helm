@@ -6,7 +6,7 @@ RUN apk -Uuv add curl bash && rm /var/cache/apk/*
 
 ENV VERSION v2.4.2
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
-ENV KUBECTL v1.6.2
+ENV KUBECTL v1.6.5
 
 ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
 
