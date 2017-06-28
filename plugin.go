@@ -38,6 +38,7 @@ type (
 		Upgrade       bool     `json:"upgrade"`
 		ClientOnly    bool     `json:"client_only"`
 		ReuseValues   bool     `json:"reuse_values"`
+		Timeout       string   `json:"timeout"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -97,6 +98,10 @@ func setPushEventCommand(p *Plugin) {
 	}
 	if p.Config.ReuseValues {
 		upgrade = append(upgrade, "--reuse-values")
+	}
+	if p.Config.Timeout != "" {
+		upgrade = append(upgrade, "--timeout")
+		upgrade = append(upgrade, p.Config.Timeout)
 	}
 	p.Config.HelmCommand = upgrade
 

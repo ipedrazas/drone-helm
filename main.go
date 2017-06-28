@@ -98,6 +98,11 @@ func main() {
 			Usage:  "when upgrading, reuse the last release's values, and merge in any new values",
 			EnvVar: "PLUGIN_REUSE_VALUES,REUSE_VALUES",
 		},
+		cli.StringFlag{
+			Name:   "timeout",
+			Usage:  "time in seconds to wait for any individual kubernetes operation (like Jobs for hooks) (default 300)",
+			EnvVar: "PLUGIN_TIMEOUT,TIMEOUT",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -129,6 +134,7 @@ func run(c *cli.Context) error {
 			ClientOnly:    c.Bool("client-only"),
 			Upgrade:       c.Bool("upgrade"),
 			ReuseValues:   c.Bool("reuse-values"),
+			Timeout:       c.String("timeout"),
 		},
 	}
 	resolveSecrets(&plugin)
