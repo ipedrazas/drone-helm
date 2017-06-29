@@ -79,6 +79,11 @@ func main() {
 			EnvVar: "PLUGIN_WAIT,WAIT",
 		},
 		cli.BoolFlag{
+			Name:   "recreate-pods",
+			Usage:  "performs pods restart for the resource if applicable",
+			EnvVar: "PLUGIN_RECREATE_PODS,RECREATE_PODS",
+		},
+		cli.BoolFlag{
 			Name:   "upgrade",
 			Usage:  "if set, will upgrade tiller to the latest version",
 			EnvVar: "PLUGIN_UPGRADE,UPGRADE",
@@ -87,6 +92,16 @@ func main() {
 			Name:   "client-only",
 			Usage:  "if set, it will initilises helm in the client side only",
 			EnvVar: "PLUGIN_CLIENT_ONLY,CLIENT_ONLY",
+		},
+		cli.BoolFlag{
+			Name:   "reuse-values",
+			Usage:  "when upgrading, reuse the last release's values, and merge in any new values",
+			EnvVar: "PLUGIN_REUSE_VALUES,REUSE_VALUES",
+		},
+		cli.StringFlag{
+			Name:   "timeout",
+			Usage:  "time in seconds to wait for any individual kubernetes operation (like Jobs for hooks) (default 300)",
+			EnvVar: "PLUGIN_TIMEOUT,TIMEOUT",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -115,8 +130,11 @@ func run(c *cli.Context) error {
 			Prefix:        c.String("prefix"),
 			TillerNs:      c.String("tiller-ns"),
 			Wait:          c.Bool("wait"),
+			RecreatePods:  c.Bool("recreate-pods"),
 			ClientOnly:    c.Bool("client-only"),
 			Upgrade:       c.Bool("upgrade"),
+			ReuseValues:   c.Bool("reuse-values"),
+			Timeout:       c.String("timeout"),
 		},
 	}
 	resolveSecrets(&plugin)

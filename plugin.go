@@ -34,8 +34,11 @@ type (
 		Prefix        string   `json:"prefix"`
 		TillerNs      string   `json:"tiller_ns"`
 		Wait          bool     `json:"wait"`
+		RecreatePods  bool     `json:"recreate_pods"`
 		Upgrade       bool     `json:"upgrade"`
 		ClientOnly    bool     `json:"client_only"`
+		ReuseValues   bool     `json:"reuse_values"`
+		Timeout       string   `json:"timeout"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -77,6 +80,10 @@ func setPushEventCommand(p *Plugin) {
 		upgrade = append(upgrade, "--namespace")
 		upgrade = append(upgrade, p.Config.Namespace)
 	}
+	if p.Config.TillerNs != "" {
+		upgrade = append(upgrade, "--tiller-namespace")
+		upgrade = append(upgrade, p.Config.TillerNs)
+	}
 	if p.Config.DryRun {
 		upgrade = append(upgrade, "--dry-run")
 	}
@@ -86,6 +93,16 @@ func setPushEventCommand(p *Plugin) {
 	if p.Config.Wait {
 		upgrade = append(upgrade, "--wait")
 	}
+	if p.Config.RecreatePods {
+		upgrade = append(upgrade, "--recreate-pods")
+	}
+	if p.Config.ReuseValues {
+		upgrade = append(upgrade, "--reuse-values")
+	}
+	if p.Config.Timeout != "" {
+		upgrade = append(upgrade, "--timeout")
+		upgrade = append(upgrade, p.Config.Timeout)
+	}
 	p.Config.HelmCommand = upgrade
 
 }
@@ -94,6 +111,10 @@ func setHelmCommand(p *Plugin) {
 	buildEvent := os.Getenv("DRONE_BUILD_EVENT")
 	switch buildEvent {
 	case "push":
+		setPushEventCommand(p)
+	case "tag":
+		setPushEventCommand(p)
+	case "deployment":
 		setPushEventCommand(p)
 	case "delete":
 		setDeleteEventCommand(p)
