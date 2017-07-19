@@ -103,6 +103,11 @@ func main() {
 			Usage:  "time in seconds to wait for any individual kubernetes operation (like Jobs for hooks) (default 300)",
 			EnvVar: "PLUGIN_TIMEOUT,TIMEOUT",
 		},
+		cli.BoolFlag{
+			Name:   "force",
+			Usage:  "force resource update through delete/recreate if needed",
+			EnvVar: "PLUGIN_FORCE,FORCE",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -135,6 +140,7 @@ func run(c *cli.Context) error {
 			Upgrade:       c.Bool("upgrade"),
 			ReuseValues:   c.Bool("reuse-values"),
 			Timeout:       c.String("timeout"),
+			Force:         c.Bool("force"),
 		},
 	}
 	resolveSecrets(&plugin)
