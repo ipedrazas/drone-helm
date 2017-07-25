@@ -38,7 +38,8 @@ ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
 ADD https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl /tmp
 
 
-RUN tar -zxvf /tmp/${FILENAME} -C /tmp \
+RUN if [[ ! -f "/tmp/${FILENAME}" ]]; then echo "waiting 5s to download..."; sleep 5; fi \
+  && tar -zxvf /tmp/${FILENAME} -C /tmp \
   && mv /tmp/linux-amd64/helm /bin/helm \
   && chmod +x /tmp/kubectl \
   && mv /tmp/kubectl /bin/kubectl \
