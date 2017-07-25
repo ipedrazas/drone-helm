@@ -1,12 +1,37 @@
-FROM alpine:latest
+#
+# ----- Go Builder Image ------
+#
+FROM golang:1.8-alpine AS builder
+
+RUN apk add --no-cache git
+
+# set working directory
+RUN mkdir -p /go/src/drone-helm
+WORKDIR /go/src/drone-helm
+
+# copy sources
+COPY . .
+
+# run tests
+RUN go test -v
+
+# build binary
+RUN go build -v -o "/drone-helm"
+
+#
+# ------ Drone-Helm plugin image ------
+#
+
+FROM alpine:3.6
 MAINTAINER Ivan Pedrazas <ipedrazas@gmail.com>
 
-
-RUN apk -Uuv add curl bash && rm /var/cache/apk/*
-
-ENV VERSION v2.5.0
+# Helm version: can be passed at build time (default to v2.5.0)
+ARG VERSION
+ENV VERSION ${VERSION:-v2.5.0}
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
-ENV KUBECTL v1.6.6
+
+ARG KUBECTL
+ENV KUBECTL ${KUBECTL:-v1.6.6}
 
 ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
 
@@ -21,10 +46,8 @@ RUN tar -zxvf /tmp/${FILENAME} -C /tmp \
 
 LABEL description="Kubeclt and Helm."
 LABEL base="alpine"
-LABEL language="python"
 
-
-COPY drone-helm /bin/drone-helm
+COPY --from=builder /drone-helm /bin/drone-helm
 COPY kubeconfig /root/.kube/kubeconfig
 
 ENTRYPOINT [ "/bin/drone-helm" ]

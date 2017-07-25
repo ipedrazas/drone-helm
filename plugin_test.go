@@ -225,6 +225,33 @@ func TestDetHelmInitUpgrade(t *testing.T) {
 		t.Error("Helm cannot init in client only")
 	}
 }
+
+func TestDetHelmInitCanary(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   nil,
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+			CanaryImage:   true,
+		},
+	}
+	init := doHelmInit(plugin)
+	result := strings.Join(init, " ")
+	expected := "init "
+	if plugin.Config.CanaryImage {
+		expected = expected + "--canary-image"
+	}
+
+	if expected != result {
+		t.Error("Helm cannot init in client only")
+	}
+}
 func TestResolveSecretsFallback(t *testing.T) {
 	tag := "v0.1.1"
 	api := "http://apiserver"
