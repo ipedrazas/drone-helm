@@ -90,6 +90,11 @@ func main() {
 		},
 		cli.BoolFlag{
 			Name:   "client-only",
+			Usage:  "if set, Helm will use the canary tiller image",
+			EnvVar: "PLUGIN_CANARY_IMAGE,CANARY_IMAGE",
+		},
+		cli.BoolFlag{
+			Name:   "canary-image",
 			Usage:  "if set, it will initilises helm in the client side only",
 			EnvVar: "PLUGIN_CLIENT_ONLY,CLIENT_ONLY",
 		},
@@ -137,6 +142,7 @@ func run(c *cli.Context) error {
 			Wait:          c.Bool("wait"),
 			RecreatePods:  c.Bool("recreate-pods"),
 			ClientOnly:    c.Bool("client-only"),
+			CanaryImage:   c.Bool("canary-image"),
 			Upgrade:       c.Bool("upgrade"),
 			ReuseValues:   c.Bool("reuse-values"),
 			Timeout:       c.String("timeout"),

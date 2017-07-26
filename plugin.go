@@ -36,6 +36,7 @@ type (
 		Wait          bool     `json:"wait"`
 		RecreatePods  bool     `json:"recreate_pods"`
 		Upgrade       bool     `json:"upgrade"`
+		CanaryImage   bool     `json:"canary_image"`
 		ClientOnly    bool     `json:"client_only"`
 		ReuseValues   bool     `json:"reuse_values"`
 		Timeout       string   `json:"timeout"`
@@ -140,6 +141,9 @@ func doHelmInit(p *Plugin) []string {
 	}
 	if p.Config.Upgrade {
 		init = append(init, "--upgrade")
+	}
+	if p.Config.CanaryImage {
+		init = append(init, "--canary-image")
 	}
 
 	return init

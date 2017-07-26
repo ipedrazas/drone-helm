@@ -17,7 +17,7 @@ pipeline:
 
 
   build_docker_image:
-    image: docker:1.12
+    image: docker:17.05
     environment:
       - DOCKER_HOST=tcp://127.0.0.1:2375
       - TAG=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
@@ -41,7 +41,7 @@ pipeline:
 
 services:
   dind:
-    image: docker:1.12-dind
+    image: docker:17.05-dind
     privileged: true
     command:
       - "-s"
