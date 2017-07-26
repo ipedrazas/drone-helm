@@ -37,6 +37,7 @@ ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
 
 ADD https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl /tmp
 
+RUN apk add --no-cache ca-certificates
 
 RUN tar -zxvf /tmp/${FILENAME} -C /tmp \
   && mv /tmp/linux-amd64/helm /bin/helm \
