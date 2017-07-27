@@ -31,7 +31,7 @@ ENV VERSION ${VERSION:-v2.5.1}
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
 
 ARG KUBECTL
-ENV KUBECTL ${KUBECTL:-v1.6.6}
+ENV KUBECTL ${KUBECTL:-v1.7.2}
 
 ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
 
