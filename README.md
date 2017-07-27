@@ -2,7 +2,7 @@
 
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
-* Current `helm` version: 2.5.0
+* Current `helm` version: 2.5.1
 * Current `kubectl` version: 1.6.6
 
 For example, this configuration will deploy my-app using a chart located in the repo called `my-chart`
