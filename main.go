@@ -39,9 +39,9 @@ func main() {
 			EnvVar: "PLUGIN_CHART,CHART",
 		},
 		cli.StringFlag{
-			Name:   "version",
+			Name:   "chart-version",
 			Usage:  "specify the exact chart version to use. If this is not specified, the latest version is used",
-			EnvVar: "PLUGIN_VERSION,VERSION",
+			EnvVar: "PLUGIN_CHART_VERSION,CHART_VERSION",
 		},
 		cli.StringFlag{
 			Name:   "values",
@@ -139,7 +139,7 @@ func run(c *cli.Context) error {
 			ValuesFiles:   c.String("values_files"),
 			Release:       c.String("release"),
 			Chart:         c.String("chart"),
-			Version:       c.String("version"),
+			Version:       c.String("chart-version"),
 			Debug:         c.Bool("debug"),
 			DryRun:        c.Bool("dry-run"),
 			Secrets:       c.StringSlice("secrets"),
