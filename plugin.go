@@ -19,29 +19,30 @@ var CONFIG = "/root/.kube/config"
 type (
 	// Config maps the params we need to run Helm
 	Config struct {
-		APIServer     string   `json:"api_server"`
-		Token         string   `json:"token"`
-		HelmCommand   []string `json:"helm_command"`
-		SkipTLSVerify bool     `json:"tls_skip_verify"`
-		Namespace     string   `json:"namespace"`
-		Release       string   `json:"release"`
-		Chart         string   `json:"chart"`
-		Version       string   `json:"version"`
-		Values        string   `json:"values"`
-		ValuesFiles   string   `json:"values_files"`
-		Debug         bool     `json:"debug"`
-		DryRun        bool     `json:"dry_run"`
-		Secrets       []string `json:"secrets"`
-		Prefix        string   `json:"prefix"`
-		TillerNs      string   `json:"tiller_ns"`
-		Wait          bool     `json:"wait"`
-		RecreatePods  bool     `json:"recreate_pods"`
-		Upgrade       bool     `json:"upgrade"`
-		CanaryImage   bool     `json:"canary_image"`
-		ClientOnly    bool     `json:"client_only"`
-		ReuseValues   bool     `json:"reuse_values"`
-		Timeout       string   `json:"timeout"`
-		Force         bool     `json:"force"`
+		APIServer      string   `json:"api_server"`
+		Token          string   `json:"token"`
+		ServiceAccount string   `json:"service_account"`
+		HelmCommand    []string `json:"helm_command"`
+		SkipTLSVerify  bool     `json:"tls_skip_verify"`
+		Namespace      string   `json:"namespace"`
+		Release        string   `json:"release"`
+		Chart          string   `json:"chart"`
+		Version        string   `json:"version"`
+		Values         string   `json:"values"`
+		ValuesFiles    string   `json:"values_files"`
+		Debug          bool     `json:"debug"`
+		DryRun         bool     `json:"dry_run"`
+		Secrets        []string `json:"secrets"`
+		Prefix         string   `json:"prefix"`
+		TillerNs       string   `json:"tiller_ns"`
+		Wait           bool     `json:"wait"`
+		RecreatePods   bool     `json:"recreate_pods"`
+		Upgrade        bool     `json:"upgrade"`
+		CanaryImage    bool     `json:"canary_image"`
+		ClientOnly     bool     `json:"client_only"`
+		ReuseValues    bool     `json:"reuse_values"`
+		Timeout        string   `json:"timeout"`
+		Force          bool     `json:"force"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -210,6 +211,10 @@ func resolveSecrets(p *Plugin) {
 	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix)
 	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix)
 	p.Config.Token = resolveEnvVar("${KUBERNETES_TOKEN}", p.Config.Prefix)
+	p.Config.ServiceAccount = resolveEnvVar("${SERVICE_ACCOUNT}", p.Config.Prefix)
+	if p.Config.ServiceAccount == "" {
+		p.Config.ServiceAccount = "helm"
+	}
 }
 
 // getEnvVars will return [${TAG} {TAG} TAG]
