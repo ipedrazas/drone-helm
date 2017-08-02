@@ -15,11 +15,12 @@ func TestInitialiseKubeconfig(t *testing.T) {
 
 	plugin := Plugin{
 		Config: Config{
-			APIServer:     "http://myapiserver",
-			Token:         "secret-token",
-			HelmCommand:   cmd,
-			Namespace:     "default",
-			SkipTLSVerify: true,
+			APIServer:      "http://myapiserver",
+			Token:          "secret-token",
+			ServiceAccount: "default-account",
+			HelmCommand:    cmd,
+			Namespace:      "default",
+			SkipTLSVerify:  true,
 		},
 	}
 
@@ -36,6 +37,9 @@ func TestInitialiseKubeconfig(t *testing.T) {
 	}
 	if !strings.Contains(kubeConfigStr, "http://myapiserver") {
 		t.Errorf("Kubeconfig doesn't render APIServer")
+	}
+	if !strings.Contains(kubeConfigStr, "default-account") {
+		t.Errorf("Kubeconfig doesn't render serviceaccount")
 	}
 
 }
@@ -72,9 +76,12 @@ func TestGetHelmCommand(t *testing.T) {
 func TestResolveSecrets(t *testing.T) {
 	tag := "v0.1.1"
 	api := "http://apiserver"
+	token := "12345"
+	account := "helm"
 	os.Setenv("MY_TAG", tag)
 	os.Setenv("MY_API_SERVER", api)
-	os.Setenv("MY_TOKEN", "12345")
+	os.Setenv("MY_KUBERNETES_TOKEN", token)
+	os.Setenv("MY_SERVICE_ACCOUNT", "helm")
 
 	plugin := &Plugin{
 		Config: Config{
@@ -101,6 +108,12 @@ func TestResolveSecrets(t *testing.T) {
 
 	if plugin.Config.APIServer != api {
 		t.Errorf("env var ${API_SERVER} not resolved %s", api)
+	}
+	if plugin.Config.Token != token {
+		t.Errorf("env var ${KUBERNETES_TOKEN} not resolved %s", token)
+	}
+	if plugin.Config.ServiceAccount != account {
+		t.Errorf("env var ${SERVICE_ACCOUNT} not resolved %s", account)
 	}
 }
 
