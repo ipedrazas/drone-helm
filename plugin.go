@@ -26,6 +26,7 @@ type (
 		Namespace     string   `json:"namespace"`
 		Release       string   `json:"release"`
 		Chart         string   `json:"chart"`
+		Version       string   `json:"version"`
 		Values        string   `json:"values"`
 		ValuesFiles   string   `json:"values_files"`
 		Debug         bool     `json:"debug"`
@@ -68,6 +69,10 @@ func setPushEventCommand(p *Plugin) {
 		upgrade = append(upgrade, p.Config.Release)
 	}
 	upgrade = append(upgrade, p.Config.Chart)
+	if p.Config.Version != "" {
+		upgrade = append(upgrade, "--version")
+		upgrade = append(upgrade, p.Config.Version)
+	}
 	if p.Config.Values != "" {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, p.Config.Values)

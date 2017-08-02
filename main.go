@@ -35,8 +35,13 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "chart",
-			Usage:  "Kubernetes helm release",
+			Usage:  "Kubernetes helm chart name",
 			EnvVar: "PLUGIN_CHART,CHART",
+		},
+		cli.StringFlag{
+			Name:   "chart-version",
+			Usage:  "specify the exact chart version to use. If this is not specified, the latest version is used",
+			EnvVar: "PLUGIN_CHART_VERSION,CHART_VERSION",
 		},
 		cli.StringFlag{
 			Name:   "values",
@@ -134,6 +139,7 @@ func run(c *cli.Context) error {
 			ValuesFiles:   c.String("values_files"),
 			Release:       c.String("release"),
 			Chart:         c.String("chart"),
+			Version:       c.String("chart-version"),
 			Debug:         c.Bool("debug"),
 			DryRun:        c.Bool("dry-run"),
 			Secrets:       c.StringSlice("secrets"),

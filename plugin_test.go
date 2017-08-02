@@ -52,6 +52,7 @@ func TestGetHelmCommand(t *testing.T) {
 			Debug:         true,
 			DryRun:        true,
 			Chart:         "./chart/test",
+			Version:       "1.2.3",
 			Release:       "test-release",
 			Values:        "image.tag=v.0.1.0,nameOverride=my-over-app",
 			Wait:          true,
@@ -62,7 +63,7 @@ func TestGetHelmCommand(t *testing.T) {
 	}
 	setHelmCommand(plugin)
 	res := strings.Join(plugin.Config.HelmCommand[:], " ")
-	expected := "upgrade --install test-release ./chart/test --set image.tag=v.0.1.0,nameOverride=my-over-app --namespace default --dry-run --debug --wait --reuse-values --timeout 500 --force"
+	expected := "upgrade --install test-release ./chart/test --version 1.2.3 --set image.tag=v.0.1.0,nameOverride=my-over-app --namespace default --dry-run --debug --wait --reuse-values --timeout 500 --force"
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
