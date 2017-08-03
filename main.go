@@ -24,6 +24,12 @@ func main() {
 			EnvVar: "PLUGIN_HELM_COMMAND,HELM_COMMAND",
 		},
 		cli.StringFlag{
+			Name:   "kube-config",
+			Usage:  "Kubernetes configuration file path",
+			EnvVar: "PLUGIN_KUBE_CONFIG,KUBE_CONFIG",
+			Value:  "/root/.kube/config",
+		},
+		cli.StringFlag{
 			Name:   "namespace",
 			Usage:  "Kubernetes namespace",
 			EnvVar: "PLUGIN_NAMESPACE,NAMESPACE",
@@ -133,6 +139,7 @@ func run(c *cli.Context) error {
 			APIServer:      c.String("api_server"),
 			Token:          c.String("token"),
 			ServiceAccount: c.String("service-account"),
+			KubeConfig:     c.String("kube-config"),
 			HelmCommand:    c.StringSlice("helm_command"),
 			Namespace:      c.String("namespace"),
 			SkipTLSVerify:  c.Bool("skip_tls_verify"),

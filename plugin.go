@@ -14,7 +14,6 @@ import (
 
 var HELM_BIN = "/bin/helm"
 var KUBECONFIG = "/root/.kube/kubeconfig"
-var CONFIG = "/root/.kube/config"
 
 type (
 	// Config maps the params we need to run Helm
@@ -22,6 +21,7 @@ type (
 		APIServer      string   `json:"api_server"`
 		Token          string   `json:"token"`
 		ServiceAccount string   `json:"service_account"`
+		KubeConfig     string   `json:"kube_config"`
 		HelmCommand    []string `json:"helm_command"`
 		SkipTLSVerify  bool     `json:"tls_skip_verify"`
 		Namespace      string   `json:"namespace"`
@@ -158,14 +158,17 @@ func doHelmInit(p *Plugin) []string {
 
 // Exec default method
 func (p *Plugin) Exec() error {
-	resolveSecrets(p)
-	if p.Config.APIServer == "" {
-		return fmt.Errorf("Error: API Server is needed to deploy.")
+	// create /root/.kube/config file if not exists
+	if _, err := os.Stat(p.Config.KubeConfig); os.IsNotExist(err) {
+		resolveSecrets(p)
+		if p.Config.APIServer == "" {
+			return fmt.Errorf("Error: API Server is needed to deploy.")
+		}
+		if p.Config.Token == "" {
+			return fmt.Errorf("Error: Token is needed to deploy.")
+		}
+		initialiseKubeconfig(&p.Config, KUBECONFIG, p.Config.KubeConfig)
 	}
-	if p.Config.Token == "" {
-		return fmt.Errorf("Error: Token is needed to deploy.")
-	}
-	initialiseKubeconfig(&p.Config, KUBECONFIG, CONFIG)
 
 	if p.Config.Debug {
 		p.debug()
@@ -189,19 +192,15 @@ func (p *Plugin) Exec() error {
 }
 
 func initialiseKubeconfig(params *Config, source string, target string) error {
-	var err error
-	if _, err = os.Stat(target); os.IsNotExist(err) {
-		f, err := os.Create(target)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		// parse template
-		t, _ := template.ParseFiles(source)
-		// execute template
-		return t.Execute(f, params)
+	f, err := os.Create(target)
+	if err != nil {
+		return err
 	}
-	return err
+	defer f.Close()
+	// parse template
+	t, _ := template.ParseFiles(source)
+	// execute template
+	return t.Execute(f, params)
 }
 
 func runCommand(params []string) error {
@@ -268,7 +267,7 @@ func (p *Plugin) debug() {
 	if err == nil {
 		fmt.Println(string(kubeconfig))
 	}
-	config, err := ioutil.ReadFile(CONFIG)
+	config, err := ioutil.ReadFile(p.Config.KubeConfig)
 	if err == nil {
 		fmt.Println(string(config))
 	}
