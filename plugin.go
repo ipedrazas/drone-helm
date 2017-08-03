@@ -189,10 +189,18 @@ func (p *Plugin) Exec() error {
 }
 
 func initialiseKubeconfig(params *Config, source string, target string) error {
-	t, _ := template.ParseFiles(source)
-	f, err := os.Create(target)
-	err = t.Execute(f, params)
-	f.Close()
+	var err error
+	if _, err = os.Stat(target); os.IsNotExist(err) {
+		f, err := os.Create(target)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		// parse template
+		t, _ := template.ParseFiles(source)
+		// execute template
+		return t.Execute(f, params)
+	}
 	return err
 }
 
