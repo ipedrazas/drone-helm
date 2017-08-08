@@ -33,19 +33,17 @@ ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
 ARG KUBECTL
 ENV KUBECTL ${KUBECTL:-v1.7.2}
 
-ADD http://storage.googleapis.com/kubernetes-helm/${FILENAME} /tmp
-
-ADD https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl /tmp
-
-RUN apk add --no-cache ca-certificates
-
-RUN tar -zxvf /tmp/${FILENAME} -C /tmp \
+RUN set -ex \
+  && apk add --no-cache curl ca-certificates \
+  && curl -o /tmp/${FILENAME} http://storage.googleapis.com/kubernetes-helm/${FILENAME} \
+  && curl -o /tmp/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl \
+  && tar -zxvf /tmp/${FILENAME} -C /tmp \
   && mv /tmp/linux-amd64/helm /bin/helm \
   && chmod +x /tmp/kubectl \
   && mv /tmp/kubectl /bin/kubectl \
   && rm -rf /tmp
 
-LABEL description="Kubeclt and Helm."
+LABEL description="Kubectl and Helm."
 LABEL base="alpine"
 
 COPY --from=builder /drone-helm /bin/drone-helm
