@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/alecthomas/template"
@@ -43,6 +44,7 @@ type (
 		ReuseValues    bool     `json:"reuse_values"`
 		Timeout        string   `json:"timeout"`
 		Force          bool     `json:"force"`
+		HelmRepos      []string `json:"helm_repos"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -135,6 +137,37 @@ func setHelmCommand(p *Plugin) {
 
 }
 
+var repoExp = regexp.MustCompile(`^(?P<name>[\w-]+)=(?P<url>(http|https)://[\w-./:]+)`)
+
+// parseRepo returns map of regex capture groups (name, url)
+func parseRepo(repo string) (map[string]string, error) {
+	matches := repoExp.FindStringSubmatch(repo)
+	if len(matches) < 1 {
+		return nil, fmt.Errorf("Invalid repo definition: %s", repo)
+	}
+	result := make(map[string]string)
+	for i, name := range repoExp.SubexpNames() {
+		if i != 0 {
+			result[name] = matches[i]
+		}
+	}
+	return result, nil
+}
+
+func doHelmRepoAdd(repo string) ([]string, error) {
+	repoMap, err := parseRepo(unQuote(repo))
+	if err != nil {
+		return nil, err
+	}
+	repoAdd := []string{
+		"repo",
+		"add",
+		repoMap["name"],
+		repoMap["url"],
+	}
+	return repoAdd, nil
+}
+
 func doHelmInit(p *Plugin) []string {
 	init := make([]string, 1)
 	init[0] = "init"
@@ -179,6 +212,23 @@ func (p *Plugin) Exec() error {
 	if err != nil {
 		return fmt.Errorf("Error running helm command: " + strings.Join(init[:], " "))
 	}
+
+	if len(p.Config.HelmRepos) > 0 {
+		for _, repo := range p.Config.HelmRepos {
+			repoAdd, err := doHelmRepoAdd(repo)
+			if err == nil {
+				if p.Config.Debug {
+					log.Println("adding helm repo: " + strings.Join(repoAdd[:], " "))
+				}
+				if err = runCommand(repoAdd); err != nil {
+					return fmt.Errorf("Error adding helm repo: " + err.Error())
+				}
+			} else {
+				return err
+			}
+		}
+	}
+
 	setHelmCommand(p)
 
 	if p.Config.Debug {
@@ -271,6 +321,7 @@ func (p *Plugin) debug() {
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
 	fmt.Printf("Values: %s \n", p.Config.Values)
 	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
+	fmt.Printf("Helm Repos: %s \n", p.Config.HelmRepos)
 	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)
 
 	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
