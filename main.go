@@ -163,9 +163,5 @@ func run(c *cli.Context) error {
 			Force:          c.Bool("force"),
 		},
 	}
-	resolveSecrets(&plugin)
-	if plugin.Config.Debug {
-		plugin.debug()
-	}
 	return plugin.Exec()
 }
