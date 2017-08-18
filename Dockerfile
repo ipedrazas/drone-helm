@@ -41,7 +41,7 @@ RUN set -ex \
   && mv /tmp/linux-amd64/helm /bin/helm \
   && chmod +x /tmp/kubectl \
   && mv /tmp/kubectl /bin/kubectl \
-  && rm -rf /tmp
+  && rm -rf /tmp/*
 
 LABEL description="Kubectl and Helm."
 LABEL base="alpine"
