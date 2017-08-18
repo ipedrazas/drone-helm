@@ -12,6 +12,9 @@ WORKDIR /go/src/drone-helm
 # copy sources
 COPY . .
 
+# add dependencies
+RUN go get
+
 # run tests
 RUN go test -v
 
