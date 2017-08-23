@@ -10,16 +10,12 @@ import (
 
 func TestInitialiseKubeconfig(t *testing.T) {
 
-	cmd := make([]string, 2)
-	cmd[0] = "install"
-	cmd[1] = "--debug"
-
 	plugin := Plugin{
 		Config: Config{
 			APIServer:      "http://myapiserver",
 			Token:          "secret-token",
 			ServiceAccount: "default-account",
-			HelmCommand:    cmd,
+			HelmCommand:    "",
 			Namespace:      "default",
 			SkipTLSVerify:  true,
 		},
@@ -45,13 +41,13 @@ func TestInitialiseKubeconfig(t *testing.T) {
 
 }
 
-func TestGetHelmCommand(t *testing.T) {
+func TestGetHelmCommandEmptyPushEvent(t *testing.T) {
 	os.Setenv("DRONE_BUILD_EVENT", "push")
 	plugin := &Plugin{
 		Config: Config{
 			APIServer:     "http://myapiserver",
 			Token:         "secret-token",
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -67,7 +63,36 @@ func TestGetHelmCommand(t *testing.T) {
 		},
 	}
 	setHelmCommand(plugin)
-	res := strings.Join(plugin.Config.HelmCommand[:], " ")
+	res := strings.Join(plugin.command[:], " ")
+	expected := "upgrade --install test-release ./chart/test --version 1.2.3 --set image.tag=v.0.1.0,nameOverride=my-over-app --namespace default --dry-run --debug --wait --reuse-values --timeout 500 --force"
+	if res != expected {
+		t.Errorf("Result is %s and we expected %s", res, expected)
+	}
+}
+
+func TestGetHelmCommandUpgrade(t *testing.T) {
+	os.Setenv("DRONE_BUILD_EVENT", "push")
+	plugin := &Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Token:         "secret-token",
+			HelmCommand:   "upgrade",
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Version:       "1.2.3",
+			Release:       "test-release",
+			Values:        `"image.tag=v.0.1.0,nameOverride=my-over-app"`,
+			Wait:          true,
+			ReuseValues:   true,
+			Timeout:       "500",
+			Force:         true,
+		},
+	}
+	setHelmCommand(plugin)
+	res := strings.Join(plugin.command[:], " ")
 	expected := "upgrade --install test-release ./chart/test --version 1.2.3 --set image.tag=v.0.1.0,nameOverride=my-over-app --namespace default --dry-run --debug --wait --reuse-values --timeout 500 --force"
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
@@ -100,7 +125,7 @@ func TestResolveSecrets(t *testing.T) {
 
 		plugin := &Plugin{
 			Config: Config{
-				HelmCommand:   nil,
+				HelmCommand:   "",
 				Namespace:     "default",
 				SkipTLSVerify: true,
 				Debug:         true,
@@ -142,7 +167,7 @@ func TestResolveSecrets(t *testing.T) {
 func TestDetHelmRepoAdd(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -210,10 +235,10 @@ func TestReplaceEnvvars(t *testing.T) {
 	}
 }
 
-func TestSetHelmHelp(t *testing.T) {
+func TestSetHelpCommand(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -224,8 +249,8 @@ func TestSetHelmHelp(t *testing.T) {
 			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
 		},
 	}
-	setHelmHelp(plugin)
-	if plugin.Config.HelmCommand == nil {
+	setHelpCommand(plugin)
+	if plugin.command == nil {
 		t.Error("Helm help is not displayed")
 	}
 }
@@ -233,7 +258,7 @@ func TestSetHelmHelp(t *testing.T) {
 func TestDetHelmInit(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -257,7 +282,7 @@ func TestDetHelmInit(t *testing.T) {
 func TestDetHelmInitClient(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -284,7 +309,7 @@ func TestDetHelmInitClient(t *testing.T) {
 func TestDetHelmInitUpgrade(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -311,7 +336,7 @@ func TestDetHelmInitUpgrade(t *testing.T) {
 func TestDetHelmInitCanary(t *testing.T) {
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
@@ -344,7 +369,7 @@ func TestResolveSecretsFallback(t *testing.T) {
 
 	plugin := &Plugin{
 		Config: Config{
-			HelmCommand:   nil,
+			HelmCommand:   "",
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
