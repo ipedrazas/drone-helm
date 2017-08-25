@@ -17,20 +17,17 @@ pipeline:
 
 
   build_docker_image:
-    image: docker:17.06-dind
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - TAG=$DRONE_BRANCH-$DRONE_COMMIT_SHA:0:7
-    commands:
-      # - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
-      - docker version
-      - docker build -t image .
-      - docker tag image quay.io/ipedrazas/drone-helm:latest
-      - docker tag image quay.io/ipedrazas/drone-helm:$TAG
-      - docker push quay.io/ipedrazas/drone-helm
-    # when:
-    #  event: [push]
-    #  branch: [master]
+      image: docker:1.12
+      environment:
+        - DOCKER_HOST=tcp://127.0.0.1:2375
+      commands:
+        # - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
+        - docker version
+        - docker build -t image .
+        - docker tag image quay.io/sohohouse/drone-helm:latest
+        - docker tag image "quay.io/sohohouse/drone-helm:${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}"
+        - docker push quay.io/sohohouse/drone-helm
+
 
   slack:
     image: plugins/slack
@@ -41,7 +38,7 @@ pipeline:
 
 services:
   dind:
-    image: docker:17.06-dind
+    image: docker:1.12-dind
     privileged: true
     command:
       - "-s"
