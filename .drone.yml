@@ -17,7 +17,7 @@ pipeline:
 
 
   build_docker_image:
-    image: docker:17.06
+    image: docker:17.06-dind
     environment:
       - DOCKER_HOST=tcp://127.0.0.1:2375
       - TAG=$DRONE_BRANCH-$DRONE_COMMIT_SHA:0:7
