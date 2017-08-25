@@ -38,9 +38,10 @@ pipeline:
     username: drone
     template: >
       {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
+
 services:
   dind:
-    image: docker:17.05-dind
+    image: docker:17.06-dind
     privileged: true
     command:
       - "-s"
