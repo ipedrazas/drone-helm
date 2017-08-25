@@ -19,6 +19,7 @@ pipeline:
     image: plugins/docker
     registry: quay.io
     repo: quay.io/sohohouse/drone-helm
+    email: "no@email.com"
     secrets: [ docker_username, docker_password]
 
   # build_docker_image:
