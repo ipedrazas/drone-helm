@@ -1,4 +1,27 @@
 #
+# ----- Go Builder Image ------
+#
+FROM golang:1.8-alpine AS builder
+
+RUN apk add --no-cache git
+
+# set working directory
+RUN mkdir -p /go/src/drone-helm
+WORKDIR /go/src/drone-helm
+
+# copy sources
+COPY . .
+
+# add dependencies
+RUN go get
+
+# run tests
+RUN go test -v
+
+# build binary
+RUN go build -v -o "/drone-helm"
+
+#
 # ------ Drone-Helm plugin image ------
 #
 
