@@ -15,18 +15,22 @@ pipeline:
       - export PATH=$PATH:/go/bin
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
+  publish:
+    image: plugins/docker
+    registry: quay.io
+    repo: quay.io/sohohouse/drone-helm
 
-  build_docker_image:
-      image: docker:1.12
-      environment:
-        - DOCKER_HOST=tcp://127.0.0.1:2375
-      commands:
-        # - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
-        - docker version
-        - docker build -t image .
-        - docker tag image quay.io/sohohouse/drone-helm:latest
-        - docker tag image "quay.io/sohohouse/drone-helm:${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}"
-        - docker push quay.io/sohohouse/drone-helm
+  # build_docker_image:
+  #     image: docker:1.12
+  #     environment:
+  #       - DOCKER_HOST=tcp://127.0.0.1:2375
+  #     commands:
+  #       # - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
+  #       - docker version
+  #       - docker build -t image .
+  #       - docker tag image quay.io/sohohouse/drone-helm:latest
+  #       - docker tag image "quay.io/sohohouse/drone-helm:${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}"
+  #       - docker push quay.io/sohohouse/drone-helm
 
 
   slack:
@@ -36,13 +40,13 @@ pipeline:
     template: >
       {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
 
-services:
-  dind:
-    image: docker:1.12-dind
-    privileged: true
-    command:
-      - "-s"
-      - "overlay"
+# services:
+#   dind:
+#     image: docker:1.12-dind
+#     privileged: true
+#     command:
+#       - "-s"
+#       - "overlay"
 
 plugin:
   name: drone-helm
