@@ -39,8 +39,9 @@ pipeline:
     image: plugins/slack
     channel: deploys
     username: drone
+    secrets: [ slack_webhook ]
     template: >
-      {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
+      {{ build.author }} finished building  *<http://build.staging.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
 
 # services:
 #   dind:
