@@ -27,6 +27,8 @@ pipeline:
       - docker tag image quay.io/ipedrazas/drone-helm:$TAG
       - docker push quay.io/ipedrazas/drone-helm
     secrets: ["quay_username", "quay_password"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   
   build_docker_latest:
     image: docker:17.05-dind
@@ -39,6 +41,8 @@ pipeline:
       - docker tag image quay.io/ipedrazas/drone-helm:latest
       - docker tag image quay.io/ipedrazas/drone-helm:$TAG
       - docker push quay.io/ipedrazas/drone-helm
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     when:
      event: [push]
      branch: [master]
