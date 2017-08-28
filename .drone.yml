@@ -1,23 +1,16 @@
-# workspace:
-#   base: /go
-#   path: src/github.com/ipedrazas/drone-helm
-
 pipeline:
-  # test:
-  #   image: golang:1.8
-  #   commands:
-  #     - go get
-  #     - go test -cover -coverprofile=coverage.out
-
-  # compile:
-  #   image: golang:1.8
-  #   commands:
-  #     - export PATH=$PATH:/go/bin
-  #     - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
   docker-build:
-    # environment:
-    #       - DOCKER_API_VERSION=1.24
+    image: plugins/docker:17.05
+    repo: quay.io/ipedrazas/drone-helm
+    tags: 
+      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    registry: quay.io
+    email: "info@info.com"
+    debug: true
+    secrets: [ docker_username, docker_password ]
+
+  docker-build-master:
     image: plugins/docker:17.05
     repo: quay.io/ipedrazas/drone-helm
     tags: 
@@ -28,12 +21,13 @@ pipeline:
     debug: true
     secrets: [ docker_username, docker_password ]
 
+
   slack:
     image: plugins/slack
     channel: deploys
     username: drone
     template: >
-      {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
+      {{ build.author }} finished building  *<https://github.com/ipedrazas/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
     secrets: ["slack_webhook"]
 
 plugin:
