@@ -28,8 +28,8 @@ pipeline:
     release: ${DRONE_BRANCH}
     prefix: test
     secrets: [ test_api_server, test_kubernetes_token]
-    when:
-      branch: [master]
+    # when:
+    #   branch: [master]
 
   slack:
     image: plugins/slack
