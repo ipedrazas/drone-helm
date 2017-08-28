@@ -21,6 +21,15 @@ pipeline:
     when:
       branch: [master]
 
+  test_deploy:
+    image: quay.io/ipedrazas/drone-helm:latest
+    skip_tls_verify: true
+    chart: ./charts/plugintest
+    release: ${DRONE_BRANCH}
+    prefix: TEST
+    secrets: [ test_api_server, test_kubernetes_token]
+    when:
+      branch: [master]
 
   slack:
     image: plugins/slack
