@@ -8,6 +8,9 @@ pipeline:
     registry: quay.io
     email: "info@info.com"
     secrets: [ docker_username, docker_password ]
+    when:
+      branch:
+        exclude: [ master]
 
   docker-build-master:
     image: plugins/docker:17.05
