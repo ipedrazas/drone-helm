@@ -17,7 +17,7 @@ pipeline:
 
 
   build_docker_image:
-    image: docker:17.05
+    image: docker:17.05-dind
     environment:
       - DOCKER_HOST=tcp://127.0.0.1:2375
       - TAG=$DRONE_BRANCH-$DRONE_COMMIT_SHA:0:7
@@ -29,7 +29,7 @@ pipeline:
     secrets: ["quay_username", "quay_password"]
   
   build_docker_latest:
-    image: docker:17.05
+    image: docker:17.05-dind
     environment:
       - DOCKER_HOST=tcp://127.0.0.1:2375
       - TAG=$DRONE_BRANCH-$DRONE_COMMIT_SHA:0:7
@@ -50,15 +50,6 @@ pipeline:
     template: >
       {{ build.author }} finished building  *<http://drone.sohohousedigital.com/SohoHouse/{{ repo.name }}/{{ build.number }}|{{ build.branch }} ({{ build.number }})>* of {{ repo.name }}  with a {{ build.status }} status
     secrets: ["slack_webhook"]
-
-
-services:
-  dind:
-    image: docker:17.05-dind
-    privileged: true
-    command:
-      - "-s"
-      - "overlay"
 
 plugin:
   name: drone-helm
