@@ -26,7 +26,7 @@ pipeline:
     skip_tls_verify: true
     chart: ./charts/plugintest
     release: ${DRONE_BRANCH}
-    prefix: test
+    prefix: TEST
     debug: true
     secrets: [ test_api_server, test_kubernetes_token]
     # when:
