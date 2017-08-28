@@ -1,51 +1,32 @@
-workspace:
-  base: /go
-  path: src/github.com/ipedrazas/drone-helm
+# workspace:
+#   base: /go
+#   path: src/github.com/ipedrazas/drone-helm
 
 pipeline:
-  test:
-    image: golang:1.8
-    commands:
-      - go get
-      - go test -cover -coverprofile=coverage.out
+  # test:
+  #   image: golang:1.8
+  #   commands:
+  #     - go get
+  #     - go test -cover -coverprofile=coverage.out
 
-  compile:
-    image: golang:1.8
-    commands:
-      - export PATH=$PATH:/go/bin
-      - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
+  # compile:
+  #   image: golang:1.8
+  #   commands:
+  #     - export PATH=$PATH:/go/bin
+  #     - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
-
-  build_docker_image:
-    image: docker:17.05-dind
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - TAG=$DRONE_BRANCH-$DRONE_COMMIT_SHA:0:7
-    commands:
-      - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
-      - docker build -t image .
-      - docker tag image quay.io/ipedrazas/drone-helm:$TAG
-      - docker push quay.io/ipedrazas/drone-helm
-    secrets: ["quay_username", "quay_password"]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-  
-  build_docker_latest:
-    image: docker:17.05-dind
-    environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-      - TAG=$DRONE_BRANCH-$DRONE_COMMIT_SHA:0:7
-    commands:
-      - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
-      - docker build -t image .
-      - docker tag image quay.io/ipedrazas/drone-helm:latest
-      - docker tag image quay.io/ipedrazas/drone-helm:$TAG
-      - docker push quay.io/ipedrazas/drone-helm
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    when:
-     event: [push]
-     branch: [master]
+  docker-build:
+    # environment:
+    #       - DOCKER_API_VERSION=1.24
+    image: plugins/docker:17.05
+    repo: quay.io/ipedrazas/drone-helm
+    tags: 
+      - latest
+      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    registry: quay.io
+    email: "info@info.com"
+    debug: true
+    secrets: [ docker_username, docker_password ]
 
   slack:
     image: plugins/slack
