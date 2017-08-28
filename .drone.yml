@@ -1,25 +1,25 @@
 pipeline:
 
-  # docker-build:
-  #   image: plugins/docker:17.05
-  #   repo: quay.io/ipedrazas/drone-helm
-  #   tags: 
-  #     - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
-  #   registry: quay.io
-  #   email: "info@info.com"
-  #   secrets: [ docker_username, docker_password ]
+  docker-build:
+    image: plugins/docker:17.05
+    repo: quay.io/ipedrazas/drone-helm
+    tags: 
+      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    registry: quay.io
+    email: "info@info.com"
+    secrets: [ docker_username, docker_password ]
 
-  # docker-build-master:
-  #   image: plugins/docker:17.05
-  #   repo: quay.io/ipedrazas/drone-helm
-  #   tags: 
-  #     - latest
-  #     - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
-  #   registry: quay.io
-  #   email: "info@info.com"
-  #   secrets: [ docker_username, docker_password ]
-  #   when:
-  #     branch: [master]
+  docker-build-master:
+    image: plugins/docker:17.05
+    repo: quay.io/ipedrazas/drone-helm
+    tags: 
+      - latest
+      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    registry: quay.io
+    email: "info@info.com"
+    secrets: [ docker_username, docker_password ]
+    when:
+      branch: [master]
 
   test_deploy:
     image: quay.io/ipedrazas/drone-helm:latest
@@ -28,8 +28,8 @@ pipeline:
     release: ${DRONE_BRANCH}
     prefix: TEST
     secrets: [ test_api_server, test_kubernetes_token]
-    # when:
-    #   branch: [master]
+    when:
+      branch: [master]
 
   slack:
     image: plugins/slack
