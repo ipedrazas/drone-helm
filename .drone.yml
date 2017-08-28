@@ -27,7 +27,6 @@ pipeline:
     chart: ./charts/plugintest
     release: ${DRONE_BRANCH}
     prefix: TEST
-    debug: true
     secrets: [ test_api_server, test_kubernetes_token]
     # when:
     #   branch: [master]
