@@ -7,7 +7,6 @@ pipeline:
       - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     registry: quay.io
     email: "info@info.com"
-    debug: true
     secrets: [ docker_username, docker_password ]
 
   docker-build-master:
@@ -18,8 +17,9 @@ pipeline:
       - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     registry: quay.io
     email: "info@info.com"
-    debug: true
     secrets: [ docker_username, docker_password ]
+    when:
+      branch: [master]
 
 
   slack:
