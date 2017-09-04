@@ -5,6 +5,7 @@ pipeline:
     repo: quay.io/ipedrazas/drone-helm
     tags: 
       - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+      - k1.7.5-h2.6.1
     registry: quay.io
     email: "info@info.com"
     secrets: [ docker_username, docker_password ]
@@ -17,6 +18,7 @@ pipeline:
     repo: quay.io/ipedrazas/drone-helm
     tags: 
       - latest
+      - k1.7.5-h2.6.1
       - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     registry: quay.io
     email: "info@info.com"
