@@ -191,6 +191,10 @@ func doHelmInit(p *Plugin) []string {
 
 // Exec default method
 func (p *Plugin) Exec() error {
+	if p.Config.Debug {
+		p.debugEnv()
+	}
+
 	// create /root/.kube/config file if not exists
 	if _, err := os.Stat(p.Config.KubeConfig); os.IsNotExist(err) {
 		resolveSecrets(p)
@@ -200,6 +204,7 @@ func (p *Plugin) Exec() error {
 		if p.Config.Token == "" {
 			return fmt.Errorf("Error: Token is needed to deploy.")
 		}
+
 		initialiseKubeconfig(&p.Config, KUBECONFIG, p.Config.KubeConfig)
 	}
 
@@ -220,6 +225,7 @@ func (p *Plugin) Exec() error {
 				if p.Config.Debug {
 					log.Println("adding helm repo: " + strings.Join(repoAdd[:], " "))
 				}
+
 				if err = runCommand(repoAdd); err != nil {
 					return fmt.Errorf("Error adding helm repo: " + err.Error())
 				}
@@ -234,10 +240,12 @@ func (p *Plugin) Exec() error {
 	if p.Config.Debug {
 		log.Println("helm command: " + strings.Join(p.Config.HelmCommand[:], " "))
 	}
+
 	err = runCommand(p.Config.HelmCommand)
 	if err != nil {
 		return fmt.Errorf("Error running helm command: " + strings.Join(p.Config.HelmCommand[:], " "))
 	}
+
 	return nil
 }
 
@@ -265,10 +273,10 @@ func runCommand(params []string) error {
 }
 
 func resolveSecrets(p *Plugin) {
-	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix)
-	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix)
-	p.Config.Token = resolveEnvVar("${KUBERNETES_TOKEN}", p.Config.Prefix)
-	p.Config.ServiceAccount = resolveEnvVar("${SERVICE_ACCOUNT}", p.Config.Prefix)
+	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix, p.Config.Debug)
+	p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix, p.Config.Debug)
+	p.Config.Token = resolveEnvVar("${KUBERNETES_TOKEN}", p.Config.Prefix, p.Config.Debug)
+	p.Config.ServiceAccount = resolveEnvVar("${SERVICE_ACCOUNT}", p.Config.Prefix, p.Config.Debug)
 	if p.Config.ServiceAccount == "" {
 		p.Config.ServiceAccount = "helm"
 	}
@@ -281,23 +289,30 @@ func getEnvVars(envvars string) [][]string {
 	return extracted
 }
 
-func resolveEnvVar(key string, prefix string) string {
+func resolveEnvVar(key string, prefix string, debug bool) string {
 	envvars := getEnvVars(key)
-	return replaceEnvvars(envvars, prefix, key)
+	return replaceEnvvars(envvars, prefix, key, debug)
 }
 
-func replaceEnvvars(envvars [][]string, prefix string, s string) string {
+func replaceEnvvars(envvars [][]string, prefix string, s string, debug bool) string {
 	for _, envvar := range envvars {
 		envvarName := envvar[0]
 		envvarKey := envvar[2]
-		envval := os.Getenv(prefix + "_" + envvarKey)
+		prefixedKey := strings.ToUpper(prefix + "_" + envvarKey)
+		envval := os.Getenv(prefixedKey)
+		if debug {
+			fmt.Printf("-ReplVar: %s => %s-- %s\n", prefixedKey, envvarKey, envval)
+		}
+
 		if envval == "" {
 			envval = os.Getenv(envvarKey)
 		}
+
 		if strings.Contains(s, envvarName) {
 			s = strings.Replace(s, envvarName, envval, -1)
 		}
 	}
+
 	return s
 }
 
@@ -311,26 +326,28 @@ func unQuote(s string) string {
 	return unquoted
 }
 
-func (p *Plugin) debug() {
-	fmt.Println(p)
+func (p *Plugin) debugEnv() {
 	// debug env vars
 	for _, e := range os.Environ() {
 		fmt.Println("-Var:--", e)
 	}
+}
+
+func (p *Plugin) debug() {
+	fmt.Println(p)
 	// debug plugin obj
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
 	fmt.Printf("Values: %s \n", p.Config.Values)
 	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
 	fmt.Printf("Helm Repos: %s \n", p.Config.HelmRepos)
 	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)
-
 	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
 	if err == nil {
 		fmt.Println(string(kubeconfig))
 	}
+
 	config, err := ioutil.ReadFile(p.Config.KubeConfig)
 	if err == nil {
 		fmt.Println(string(config))
 	}
-
 }
