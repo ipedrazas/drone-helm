@@ -20,6 +20,9 @@ pipeline:
     registry: quay.io
     repo: quay.io/sohohouse/drone-helm
     email: "no@email.com"
+    tags:
+      - latest
+      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     secrets: [ docker_username, docker_password]
 
   # build_docker_image:
