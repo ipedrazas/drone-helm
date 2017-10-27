@@ -204,7 +204,7 @@ func TestReplaceEnvvars(t *testing.T) {
 	prefix := "MY"
 	testText := "this should be ${TAG} now ${TAG}"
 	result := getEnvVars(testText)
-	resolved := replaceEnvvars(result, prefix, testText)
+	resolved := replaceEnvvars(result, prefix, testText, false)
 	if !strings.Contains(resolved, tag) {
 		t.Errorf("EnvVar MY_TAG no replaced by %s  -- %s \n", tag, resolved)
 	}
