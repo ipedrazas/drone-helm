@@ -18,7 +18,7 @@ func main() {
 	app.Action = run
 	app.Version = fmt.Sprintf("1.0.%s", build)
 	app.Flags = []cli.Flag{
-		cli.StringSliceFlag{
+		cli.StringFlag{
 			Name:   "helm_command",
 			Usage:  "add the command Helm has to execute",
 			EnvVar: "PLUGIN_HELM_COMMAND,HELM_COMMAND",
@@ -145,7 +145,7 @@ func run(c *cli.Context) error {
 			Token:          c.String("token"),
 			ServiceAccount: c.String("service-account"),
 			KubeConfig:     c.String("kube-config"),
-			HelmCommand:    c.StringSlice("helm_command"),
+			HelmCommand:    c.String("helm_command"),
 			Namespace:      c.String("namespace"),
 			SkipTLSVerify:  c.Bool("skip_tls_verify"),
 			Values:         c.String("values"),

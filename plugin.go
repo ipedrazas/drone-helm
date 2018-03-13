@@ -23,7 +23,7 @@ type (
 		Token          string   `json:"token"`
 		ServiceAccount string   `json:"service_account"`
 		KubeConfig     string   `json:"kube_config"`
-		HelmCommand    []string `json:"helm_command"`
+		HelmCommand    string   `json:"helm_command"`
 		SkipTLSVerify  bool     `json:"tls_skip_verify"`
 		Namespace      string   `json:"namespace"`
 		Release        string   `json:"release"`
@@ -48,22 +48,23 @@ type (
 	}
 	// Plugin default
 	Plugin struct {
-		Config Config
+		Config  Config
+		command []string
 	}
 )
 
-func setHelmHelp(p *Plugin) {
-	p.Config.HelmCommand = []string{""}
+func setHelpCommand(p *Plugin) {
+	p.command = []string{""}
 }
-func setDeleteEventCommand(p *Plugin) {
-	upgrade := make([]string, 2)
-	upgrade[0] = "delete"
-	upgrade[1] = p.Config.Release
+func setDeleteCommand(p *Plugin) {
+	delete := make([]string, 2)
+	delete[0] = "delete"
+	delete[1] = p.Config.Release
 
-	p.Config.HelmCommand = upgrade
+	p.command = delete
 }
 
-func setPushEventCommand(p *Plugin) {
+func setUpgradeCommand(p *Plugin) {
 	upgrade := make([]string, 2)
 	upgrade[0] = "upgrade"
 	upgrade[1] = "--install"
@@ -116,23 +117,26 @@ func setPushEventCommand(p *Plugin) {
 	if p.Config.Force {
 		upgrade = append(upgrade, "--force")
 	}
-	p.Config.HelmCommand = upgrade
+	p.command = upgrade
 
 }
 
 func setHelmCommand(p *Plugin) {
-	buildEvent := os.Getenv("DRONE_BUILD_EVENT")
-	switch buildEvent {
-	case "push":
-		setPushEventCommand(p)
-	case "tag":
-		setPushEventCommand(p)
-	case "deployment":
-		setPushEventCommand(p)
+
+	switch p.Config.HelmCommand {
+	case "upgrade":
+		setUpgradeCommand(p)
 	case "delete":
-		setDeleteEventCommand(p)
+		setDeleteCommand(p)
 	default:
-		setHelmHelp(p)
+		switch os.Getenv("DRONE_BUILD_EVENT") {
+		case "push", "tag", "deployment":
+			setUpgradeCommand(p)
+		case "delete":
+			setDeleteCommand(p)
+		default:
+			setHelpCommand(p)
+		}
 	}
 
 }
@@ -238,12 +242,12 @@ func (p *Plugin) Exec() error {
 	setHelmCommand(p)
 
 	if p.Config.Debug {
-		log.Println("helm command: " + strings.Join(p.Config.HelmCommand[:], " "))
+		log.Println("helm command: " + strings.Join(p.command, " "))
 	}
 
-	err = runCommand(p.Config.HelmCommand)
+	err = runCommand(p.command)
 	if err != nil {
-		return fmt.Errorf("Error running helm command: " + strings.Join(p.Config.HelmCommand[:], " "))
+		return fmt.Errorf("Error running helm command: " + strings.Join(p.command[:], " "))
 	}
 
 	return nil
