@@ -105,12 +105,12 @@ func main() {
 			EnvVar: "PLUGIN_UPGRADE,UPGRADE",
 		},
 		cli.BoolFlag{
-			Name:   "client-only",
+			Name:   "canary-image",
 			Usage:  "if set, Helm will use the canary tiller image",
 			EnvVar: "PLUGIN_CANARY_IMAGE,CANARY_IMAGE",
 		},
 		cli.BoolFlag{
-			Name:   "canary-image",
+			Name:   "client-only",
 			Usage:  "if set, it will initilises helm in the client side only",
 			EnvVar: "PLUGIN_CLIENT_ONLY,CLIENT_ONLY",
 		},

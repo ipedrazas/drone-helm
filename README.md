@@ -1,8 +1,10 @@
 # Helm (Kubernetes) plugin for drone.io
 
+[![Build Status](https://build.kube.camp/api/badges/ipedrazas/drone-helm/status.svg)](https://build.kube.camp/ipedrazas/drone-helm)
+
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
-* Current `helm` version: 2.5.1
+* Current `helm` version: 2.6.0
 * Current `kubectl` version: 1.6.6
 
 ## Drone Pipeline Usage
