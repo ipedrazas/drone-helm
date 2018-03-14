@@ -99,6 +99,56 @@ func TestGetHelmCommandUpgrade(t *testing.T) {
 	}
 }
 
+func TestGetHelmDeleteCommand(t *testing.T) {
+	os.Setenv("DRONE_BUILD_EVENT", "delete")
+	plugin := &Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Token:         "secret-token",
+			HelmCommand:   "delete",
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Values:        "image.tag=v.0.1.0,nameOverride=my-over-app",
+			Wait:          true,
+		},
+	}
+	setHelmCommand(plugin)
+	res := strings.Join(plugin.command[:], " ")
+	expected := "delete test-release"
+	if res != expected {
+		t.Errorf("Result is %s and we expected %s", res, expected)
+	}
+}
+
+func TestGetHelmDeleteCommandOverried(t *testing.T) {
+	os.Setenv("DRONE_BUILD_EVENT", "deployment")
+	plugin := &Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Token:         "secret-token",
+			HelmCommand:   "delete",
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Values:        "image.tag=v.0.1.0,nameOverride=my-over-app",
+			Wait:          true,
+		},
+	}
+	setHelmCommand(plugin)
+	res := strings.Join(plugin.command[:], " ")
+	expected := "delete test-release"
+	if res != expected {
+		t.Errorf("Result is %s and we expected %s", res, expected)
+	}
+}
+
 func TestResolveSecrets(t *testing.T) {
 
 	testEnvs := []struct {
