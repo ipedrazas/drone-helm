@@ -205,3 +205,7 @@ pipeline_production:
       branch: [master]
 ```
 Happy Helming!
+
+## Known issues
+
+* Drone secrets that are part of `values` can be leaked in debug mode and in case of error as the whole helm command will be printed in the logs. See #52
