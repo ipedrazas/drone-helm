@@ -154,7 +154,7 @@ Get the token for the default service account in the default namespace:
 KUBERNETES_TOKEN=$(kubectl get secret $(kubectl get sa default -o jsonpath='{.secrets[].name}{"\n"}') -o jsonpath="{.data.token}" | base64 -D)
 ```
 
-Run the local image (or replace `drone-helm` with `quay.io/honestbee/drone-helm`:
+Run the local image (or replace `drone-helm` with `quay.io/ipedrazas/drone-helm`:
 ```Bash
 docker run --rm \
   -e API_SERVER="https://$(minikube ip):8443" \
