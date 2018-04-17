@@ -61,6 +61,14 @@ func setDeleteCommand(p *Plugin) {
 	delete[0] = "delete"
 	delete[1] = p.Config.Release
 
+	if p.Config.TillerNs != "" {
+		delete = append(delete, "--tiller-namespace")
+		delete = append(delete, p.Config.TillerNs)
+	}
+	if p.Config.DryRun {
+		delete = append(delete, "--dry-run")
+	}
+
 	p.command = delete
 }
 
