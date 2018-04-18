@@ -109,7 +109,6 @@ func TestGetHelmDeleteCommand(t *testing.T) {
 			Namespace:     "default",
 			SkipTLSVerify: true,
 			Debug:         true,
-			DryRun:        true,
 			Chart:         "./chart/test",
 			Release:       "test-release",
 			Values:        "image.tag=v.0.1.0,nameOverride=my-over-app",
@@ -132,6 +131,7 @@ func TestGetHelmDeleteCommandOverried(t *testing.T) {
 			Token:         "secret-token",
 			HelmCommand:   "delete",
 			Namespace:     "default",
+			TillerNs:      "default-tiller-ns",
 			SkipTLSVerify: true,
 			Debug:         true,
 			DryRun:        true,
@@ -143,7 +143,7 @@ func TestGetHelmDeleteCommandOverried(t *testing.T) {
 	}
 	setHelmCommand(plugin)
 	res := strings.Join(plugin.command[:], " ")
-	expected := "delete test-release"
+	expected := "delete test-release --tiller-namespace default-tiller-ns --dry-run"
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
