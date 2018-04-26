@@ -1,4 +1,4 @@
-package main
+package plugin
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func TestInitialiseKubeconfig(t *testing.T) {
 	}
 
 	configfile := "config3.test"
-	initialiseKubeconfig(&plugin.Config, "kubeconfig", configfile)
+	initialiseKubeconfig(&plugin.Config, "../kubeconfig", configfile)
 	data, err := ioutil.ReadFile(configfile)
 	if err != nil {
 		t.Errorf("Error reading file %v", err)
