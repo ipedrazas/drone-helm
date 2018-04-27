@@ -151,6 +151,7 @@ func TestGetHelmDeleteCommandOverried(t *testing.T) {
 
 func TestResolveSecrets(t *testing.T) {
 
+	// Test resolving secrets from env
 	testEnvs := []struct {
 		prefix  string
 		tag     string
@@ -208,8 +209,42 @@ func TestResolveSecrets(t *testing.T) {
 		}
 
 		// clean up
-		for envKey, _ := range envMap {
+		for envKey := range envMap {
 			os.Unsetenv(fmt.Sprintf("%s_%s", env.prefix, envKey))
+		}
+	}
+
+	// Test resolving provided values
+	testInput := []struct {
+		server  string
+		values  string
+		token   string
+		account string
+	}{
+		{server: "http://apiserver2", token: "123456", account: "helm2", values: "aval=test"},
+	}
+	for _, input := range testInput {
+		plugin := &Plugin{
+			Config: Config{
+				APIServer:      input.server,
+				ServiceAccount: input.account,
+				Token:          input.token,
+				Values:         input.values,
+			},
+		}
+
+		resolveSecrets(plugin)
+		if plugin.Config.APIServer != input.server {
+			t.Errorf("failed to keep APIServer '%s' got '%s'", input.server, plugin.Config.APIServer)
+		}
+		if plugin.Config.ServiceAccount != input.account {
+			t.Errorf("failed to keep ServiceAccount '%s' got '%s'", input.account, plugin.Config.ServiceAccount)
+		}
+		if plugin.Config.Token != input.token {
+			t.Errorf("failed to keep Token '%s' got '%s'", input.token, plugin.Config.Token)
+		}
+		if plugin.Config.Values != input.values {
+			t.Errorf("failed to keep Values '%s' got '%s'", input.values, plugin.Config.Values)
 		}
 	}
 }
