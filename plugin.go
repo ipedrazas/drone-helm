@@ -45,6 +45,7 @@ type (
 		Timeout        string   `json:"timeout"`
 		Force          bool     `json:"force"`
 		HelmRepos      []string `json:"helm_repos"`
+		Purge          bool     `json:"purge"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -67,6 +68,9 @@ func setDeleteCommand(p *Plugin) {
 	}
 	if p.Config.DryRun {
 		delete = append(delete, "--dry-run")
+	}
+	if p.Config.Purge {
+		delete = append(delete, "--purge")
 	}
 
 	p.command = delete

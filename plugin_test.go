@@ -139,11 +139,12 @@ func TestGetHelmDeleteCommandOverried(t *testing.T) {
 			Release:       "test-release",
 			Values:        "image.tag=v.0.1.0,nameOverride=my-over-app",
 			Wait:          true,
+			Purge:         true,
 		},
 	}
 	setHelmCommand(plugin)
 	res := strings.Join(plugin.command[:], " ")
-	expected := "delete test-release --tiller-namespace default-tiller-ns --dry-run"
+	expected := "delete test-release --tiller-namespace default-tiller-ns --dry-run --purge"
 	if res != expected {
 		t.Errorf("Result is %s and we expected %s", res, expected)
 	}
