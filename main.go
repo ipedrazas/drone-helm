@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ipedrazas/drone-helm/plugin"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli"
@@ -141,8 +139,8 @@ func run(c *cli.Context) error {
 	if c.String("env-file") != "" {
 		_ = godotenv.Load(c.String("env-file"))
 	}
-	p := plugin.Plugin{
-		Config: plugin.Config{
+	plugin := Plugin{
+		Config: Config{
 			APIServer:      c.String("api_server"),
 			Token:          c.String("token"),
 			ServiceAccount: c.String("service-account"),
@@ -171,5 +169,5 @@ func run(c *cli.Context) error {
 			Force:          c.Bool("force"),
 		},
 	}
-	return p.Exec()
+	return plugin.Exec()
 }
