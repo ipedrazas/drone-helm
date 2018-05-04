@@ -129,6 +129,11 @@ func main() {
 			Usage:  "force resource update through delete/recreate if needed",
 			EnvVar: "PLUGIN_FORCE,FORCE",
 		},
+		cli.BoolFlag{
+			Name:   "purge",
+			Usage:  "purge on delete",
+			EnvVar: "PLUGIN_PURGE,PURGE",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
