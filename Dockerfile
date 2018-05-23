@@ -30,11 +30,11 @@ MAINTAINER Ivan Pedrazas <ipedrazas@gmail.com>
 
 # Helm version: can be passed at build time (default to v2.6.0)
 ARG VERSION
-ENV VERSION ${VERSION:-v2.8.2}
+ENV VERSION ${VERSION:-v2.9.1}
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
 
 ARG KUBECTL
-ENV KUBECTL ${KUBECTL:-v1.9.3}
+ENV KUBECTL ${KUBECTL:-v1.10.2}
 
 RUN set -ex \
   && apk add --no-cache curl ca-certificates \
