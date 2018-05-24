@@ -1,8 +1,0 @@
-package: github.com/codefresh-io/drone-helm
-ignore:
-- sort
-import:
-- package: github.com/Sirupsen/logrus
-- package: github.com/alecthomas/template
-- package: github.com/joho/godotenv
-- package: github.com/urfave/cli

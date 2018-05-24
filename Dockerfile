@@ -6,17 +6,14 @@ FROM golang:1.8-alpine AS builder
 RUN apk add --no-cache git
 
 # set working directory
-RUN mkdir -p /go/src/drone-helm
-WORKDIR /go/src/drone-helm
+RUN mkdir -p /go/src/github.com/ipedrazas/drone-helm
+WORKDIR /go/src/github.com/ipedrazas/drone-helm
 
 # copy sources
 COPY . .
 
-# add dependencies
-RUN go get
-
 # run tests
-RUN go test -v
+RUN go test -v ./...
 
 # build binary
 RUN go build -v -o "/drone-helm"
