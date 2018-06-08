@@ -42,6 +42,20 @@ Last update of Drone expect you to declare the secrets you want to use:
       branch: [master]
 ```
 
+Use Kubernetes Certificate Authority Data. Just add the `<prefix>_kubernetes_certificate` secret
+```diff
+  helm_deploy:
+    image: quay.io/ipedrazas/drone-helm
+    chart: ./chart/blog
+    release: ${DRONE_BRANCH}-blog
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    prefix: PROD
+    - secrets: [ prod_api_server, prod_kubernetes_token ]
+    + secrets: [ prod_api_server, prod_kubernetes_token, prod_kubernetes_certificate ]
+    when:
+      branch: [master]
+```
+
 ### Using Values and Value files
 
 Values can be passed using the `values_files` key. Use this option to define your values in a set of files
