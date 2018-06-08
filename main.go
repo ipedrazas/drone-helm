@@ -148,6 +148,7 @@ func run(c *cli.Context) error {
 		Config: Config{
 			APIServer:      c.String("api_server"),
 			Token:          c.String("token"),
+			Certificate:    c.String("certificate"),
 			ServiceAccount: c.String("service-account"),
 			KubeConfig:     c.String("kube-config"),
 			HelmCommand:    c.String("helm_command"),
