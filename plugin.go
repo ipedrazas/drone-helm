@@ -21,6 +21,7 @@ type (
 	Config struct {
 		APIServer      string   `json:"api_server"`
 		Token          string   `json:"token"`
+		Certificate    string   `json:"certificate"`
 		ServiceAccount string   `json:"service_account"`
 		KubeConfig     string   `json:"kube_config"`
 		HelmCommand    string   `json:"helm_command"`
@@ -220,7 +221,9 @@ func (p *Plugin) Exec() error {
 		if p.Config.Token == "" {
 			return fmt.Errorf("Error: Token is needed to deploy.")
 		}
-
+		if p.Config.SkipTLSVerify == false && p.Config.Certificate == "" {
+			return fmt.Errorf("Error: Certificate is needed to deploy when SKIP_TLS_VERIFY is false.")
+		}
 		initialiseKubeconfig(&p.Config, KUBECONFIG, p.Config.KubeConfig)
 	}
 
@@ -295,6 +298,9 @@ func resolveSecrets(p *Plugin) {
 	}
 	if p.Config.Token == "" {
 		p.Config.Token = resolveEnvVar("${KUBERNETES_TOKEN}", p.Config.Prefix, p.Config.Debug)
+	}
+	if p.Config.Certificate == "" {
+		p.Config.Certificate = resolveEnvVar("${KUBERNETES_CERTIFICATE}", p.Config.Prefix, p.Config.Debug)
 	}
 	if p.Config.ServiceAccount == "" {
 		p.Config.ServiceAccount = resolveEnvVar("${SERVICE_ACCOUNT}", p.Config.Prefix, p.Config.Debug)

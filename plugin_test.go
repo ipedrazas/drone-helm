@@ -14,10 +14,11 @@ func TestInitialiseKubeconfig(t *testing.T) {
 		Config: Config{
 			APIServer:      "http://myapiserver",
 			Token:          "secret-token",
+			Certificate:    "my-cert-data",
 			ServiceAccount: "default-account",
 			HelmCommand:    "",
 			Namespace:      "default",
-			SkipTLSVerify:  true,
+			SkipTLSVerify:  false, // if set the true with Certificate, this test will fail
 		},
 	}
 
@@ -38,7 +39,9 @@ func TestInitialiseKubeconfig(t *testing.T) {
 	if !strings.Contains(kubeConfigStr, "default-account") {
 		t.Errorf("Kubeconfig doesn't render serviceaccount")
 	}
-
+	if !strings.Contains(kubeConfigStr, "my-cert-data") {
+		t.Errorf("Kubeconfig doesn't render certificate")
+	}
 }
 
 func TestGetHelmCommandEmptyPushEvent(t *testing.T) {
