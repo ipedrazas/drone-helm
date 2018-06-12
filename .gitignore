@@ -27,3 +27,4 @@ drone-helm
 *.test
 *.out
 .vscode
+.idea
