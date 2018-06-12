@@ -174,7 +174,7 @@ func run(c *cli.Context) error {
 			RecreatePods:   	c.Bool("recreate-pods"),
 			ClientOnly:     	c.Bool("client-only"),
 			CanaryImage:    	c.Bool("canary-image"),
-			Upgrade:    	    c.Bool("upgrade"),
+			Upgrade:			c.Bool("upgrade"),
 			ReuseValues:   		c.Bool("reuse-values"),
 			Timeout:        	c.String("timeout"),
 			Force:          	c.Bool("force"),
