@@ -19,34 +19,35 @@ var KUBECONFIG = "/root/.kube/kubeconfig"
 type (
 	// Config maps the params we need to run Helm
 	Config struct {
-		APIServer      string   `json:"api_server"`
-		Token          string   `json:"token"`
-		Certificate    string   `json:"certificate"`
-		ServiceAccount string   `json:"service_account"`
-		KubeConfig     string   `json:"kube_config"`
-		HelmCommand    string   `json:"helm_command"`
-		SkipTLSVerify  bool     `json:"tls_skip_verify"`
-		Namespace      string   `json:"namespace"`
-		Release        string   `json:"release"`
-		Chart          string   `json:"chart"`
-		Version        string   `json:"version"`
-		Values         string   `json:"values"`
-		ValuesFiles    string   `json:"values_files"`
-		Debug          bool     `json:"debug"`
-		DryRun         bool     `json:"dry_run"`
-		Secrets        []string `json:"secrets"`
-		Prefix         string   `json:"prefix"`
-		TillerNs       string   `json:"tiller_ns"`
-		Wait           bool     `json:"wait"`
-		RecreatePods   bool     `json:"recreate_pods"`
-		Upgrade        bool     `json:"upgrade"`
-		CanaryImage    bool     `json:"canary_image"`
-		ClientOnly     bool     `json:"client_only"`
-		ReuseValues    bool     `json:"reuse_values"`
-		Timeout        string   `json:"timeout"`
-		Force          bool     `json:"force"`
-		HelmRepos      []string `json:"helm_repos"`
-		Purge          bool     `json:"purge"`
+		APIServer      		string   `json:"api_server"`
+		Token          		string   `json:"token"`
+		Certificate    		string   `json:"certificate"`
+		ServiceAccount 		string   `json:"service_account"`
+		KubeConfig     		string   `json:"kube_config"`
+		HelmCommand    		string   `json:"helm_command"`
+		SkipTLSVerify  		bool     `json:"tls_skip_verify"`
+		Namespace      		string   `json:"namespace"`
+		Release        		string   `json:"release"`
+		Chart          		string   `json:"chart"`
+		Version        		string   `json:"version"`
+		Values         		string   `json:"values"`
+		ValuesFiles    		string   `json:"values_files"`
+		Debug          		bool     `json:"debug"`
+		DryRun         		bool     `json:"dry_run"`
+		Secrets        		[]string `json:"secrets"`
+		Prefix         		string   `json:"prefix"`
+		TillerNs       		string   `json:"tiller_ns"`
+		Wait           		bool     `json:"wait"`
+		RecreatePods   		bool     `json:"recreate_pods"`
+		Upgrade        		bool     `json:"upgrade"`
+		CanaryImage    		bool     `json:"canary_image"`
+		ClientOnly     		bool     `json:"client_only"`
+		ReuseValues    		bool     `json:"reuse_values"`
+		Timeout        		string   `json:"timeout"`
+		Force          		bool     `json:"force"`
+		HelmRepos      		[]string `json:"helm_repos"`
+		Purge          	   	bool     `json:"purge"`
+		UpdateDependencies 	bool     `json:"update_dependencies"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -206,6 +207,17 @@ func doHelmInit(p *Plugin) []string {
 
 }
 
+func doDependencyUpdate(chart string) []string {
+	dependencyUpdate := []string{
+		"dependency",
+		"update",
+		chart,
+	}
+
+	return dependencyUpdate
+}
+
+
 // Exec default method
 func (p *Plugin) Exec() error {
 	if p.Config.Debug {
@@ -251,6 +263,12 @@ func (p *Plugin) Exec() error {
 			} else {
 				return err
 			}
+		}
+	}
+
+	if p.Config.UpdateDependencies {
+		if err = runCommand(doDependencyUpdate(p.Config.Chart)); err != nil {
+			return fmt.Errorf("Error updating dependencies: " + err.Error())
 		}
 	}
 
