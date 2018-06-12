@@ -292,6 +292,16 @@ func TestDetHelmRepoAdd(t *testing.T) {
 	}
 }
 
+func TestDependencyUpdate(t *testing.T) {
+	chart := "./chart"
+	expected := "dependency update ./chart"
+	result := strings.Join(doDependencyUpdate(chart), " ")
+
+	if expected != result {
+		t.Errorf("Helm cannot update repositories - expected %q - got %q", expected, result)
+	}
+}
+
 func TestHelmAddRepositoryError(t *testing.T) {
 	_, err := doHelmRepoAdd("drone-helm=bad://drone-helm.example.com:443/stable")
 	if err == nil {

@@ -207,6 +207,17 @@ func doHelmInit(p *Plugin) []string {
 
 }
 
+func doDependencyUpdate(chart string) []string {
+	dependencyUpdate := []string{
+		"dependency",
+		"update",
+		chart,
+	}
+
+	return dependencyUpdate
+}
+
+
 // Exec default method
 func (p *Plugin) Exec() error {
 	if p.Config.Debug {
@@ -252,6 +263,12 @@ func (p *Plugin) Exec() error {
 			} else {
 				return err
 			}
+		}
+	}
+
+	if p.Config.UpdateDependencies {
+		if err = runCommand(doDependencyUpdate(p.Config.Chart)); err != nil {
+			return fmt.Errorf("Error updating dependencies: " + err.Error())
 		}
 	}
 
