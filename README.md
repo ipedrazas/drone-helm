@@ -31,6 +31,7 @@ pipeline:
 Last update of Drone expect you to declare the secrets you want to use:
 
 ```YAML
+pipeline:
   helm_deploy:
     image: quay.io/ipedrazas/drone-helm
     chart: ./chart/blog
@@ -43,6 +44,7 @@ Last update of Drone expect you to declare the secrets you want to use:
 ```
 
 Use Kubernetes Certificate Authority Data. Just add the `<prefix>_kubernetes_certificate` secret
+
 ```diff
   helm_deploy:
     image: quay.io/ipedrazas/drone-helm
@@ -61,7 +63,7 @@ Use Kubernetes Certificate Authority Data. Just add the `<prefix>_kubernetes_cer
 Values can be passed using the `values_files` key. Use this option to define your values in a set of files
 and pass them to `helm`. This option trigger the `-f` or ``--values`` flag in `helm`:
 
-```
+```plain
 --values valueFiles   specify values in a YAML file (can specify multiple) (default [])
 ```
 
@@ -84,8 +86,10 @@ pipeline:
 Charts can also be fetched from your own private Chart Repository. `helm_repos` accepts a comma separated list of key value pairs where the key is the repository name and the value is the repository url.
 
 For Example:
+
 ```YAML
-helm_deploy_staging:
+pipeline:
+  helm_deploy_staging:
     image: quay.io/ipedrazas/drone-helm
     skip_tls_verify: true
     helm_repos: hb-charts=http://helm-charts.honestbee.com
@@ -98,11 +102,37 @@ helm_deploy_staging:
         exclude: [ master ]
 ```
 
+## Updating Chart dependencies
+
+In some cases, the local Chart might contain external dependencies defined in `./charts/my-chart/requirements.yaml`, e.g.:
+
+```YAML
+dependencies:
+  - name: redis
+    version: 3.3.6
+    repository: '@stable'
+```
+
+To restore these dependecies before the deployment `update_dependencies` parameter should be used, e.g.:
+
+```YAML
+pipeline:
+  helm_deploy:
+    image: quay.io/ipedrazas/drone-helm
+    skip_tls_verify: true
+    chart: ./charts/my-chart
+    update_dependencies: true
+    release: ${DRONE_BRANCH}
+    values_files: ["global-values.yaml", "myenv-values.yaml"]
+    when:
+      branch: [master]
+```
+
 ## Drone Secrets
 
 There are two secrets you have to create (Note that if you specify the prefix, your secrets have to be created using that prefix):
 
-```Bash
+```bash
 drone secret add --image=quay.io/ipedrazas/drone-helm \
   your-user/your-repo STAGING_API_SERVER https://mykubernetesapiserver
 
@@ -114,6 +144,7 @@ drone secret add --image=quay.io/ipedrazas/drone-helm \
 ```
 
 `Prefix` helps you to use the same block in different environments:
+
 ```YAML
 pipeline:
   helm_deploy_staging:
@@ -145,7 +176,6 @@ pipeline_production:
 
 This last block defines how the plugin will deploy
 
-
 ## Testing with Minikube
 
 To test the plugin, you can run `minikube` and just run the docker image as follows:
@@ -169,7 +199,8 @@ KUBERNETES_TOKEN=$(kubectl get secret $(kubectl get sa default -o jsonpath='{.se
 ```
 
 Run the local image (or replace `drone-helm` with `quay.io/ipedrazas/drone-helm`:
-```Bash
+
+```bash
 docker run --rm \
   -e API_SERVER="https://$(minikube ip):8443" \
   -e KUBERNETES_TOKEN="${KUBERNETES_TOKEN}" \
@@ -189,6 +220,7 @@ docker run --rm \
 This plugin installs [Tiller](https://github.com/kubernetes/helm/blob/master/docs/architecture.md) in the cluster, if you want to specify the namespace where `tiller` ins installed, use the `tiller_ns` attribute.
 
 The following example will install `tiller` in the `operations` namespace:
+
 ```YAML
 pipeline_production:
   helm_deploy:
@@ -218,6 +250,7 @@ pipeline_production:
     when:
       branch: [master]
 ```
+
 Happy Helming!
 
 ## Known issues
