@@ -84,7 +84,7 @@ pipeline:
 Charts can also be fetched from your own private Chart Repository. `helm_repos` accepts a comma separated list of key value pairs where the key is the repository name and the value is the repository url.
 
 For Example:
-```
+```YAML
 helm_deploy_staging:
     image: quay.io/ipedrazas/drone-helm
     skip_tls_verify: true
