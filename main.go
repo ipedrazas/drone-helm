@@ -157,6 +157,7 @@ func run(c *cli.Context) error {
 			ServiceAccount:     c.String("service-account"),
 			KubeConfig:         c.String("kube-config"),
 			HelmCommand:        c.String("helm_command"),
+			Purge:              c.Bool("purge"),
 			Namespace:          c.String("namespace"),
 			SkipTLSVerify:      c.Bool("skip_tls_verify"),
 			Values:             c.String("values"),
