@@ -232,9 +232,6 @@ func (p *Plugin) Exec() error {
 		if p.Config.Token == "" {
 			return fmt.Errorf("Error: Token is needed to deploy.")
 		}
-		if p.Config.SkipTLSVerify == false && p.Config.Certificate == "" {
-			return fmt.Errorf("Error: Certificate is needed to deploy when SKIP_TLS_VERIFY is false.")
-		}
 		initialiseKubeconfig(&p.Config, KUBECONFIG, p.Config.KubeConfig)
 	}
 
