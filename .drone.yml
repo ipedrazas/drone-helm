@@ -56,7 +56,8 @@ pipeline:
     image: plugins/docker
     group: publish
     auto_tag: true
-    secrets: [ docker_password, plugin_repo ]
+    repo: peloton/${DRONE_REPO_NAME}
+    secrets: [ docker_password ]
     dockerfile: Dockerfile
     when:
       event: [ tag, push ]
