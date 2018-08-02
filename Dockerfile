@@ -26,7 +26,7 @@ RUN set -ex \
 LABEL description="Kubectl and Helm."
 LABEL base="alpine"
 
-ADD release/linux/amd64/drone-k8s-job /bin/
+ADD release/linux/amd64/drone-helm /bin/
 COPY kubeconfig /root/.kube/kubeconfig
 
 ENTRYPOINT [ "/bin/drone-helm" ]
