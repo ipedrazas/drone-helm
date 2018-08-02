@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/josmo/drone-helm/plugin"
 	"github.com/urfave/cli"
+	"os"
 )
 
 var build = "0" // build number set at compile-time
@@ -149,8 +149,8 @@ func run(c *cli.Context) error {
 	if c.String("env-file") != "" {
 		_ = godotenv.Load(c.String("env-file"))
 	}
-	plugin := Plugin{
-		Config: Config{
+	p := plugin.Plugin{
+		Config: plugin.Config{
 			APIServer:          c.String("api_server"),
 			Token:              c.String("token"),
 			Certificate:        c.String("certificate"),
@@ -181,5 +181,5 @@ func run(c *cli.Context) error {
 			UpdateDependencies: c.Bool("update-dependencies"),
 		},
 	}
-	return plugin.Exec()
+	return p.Exec()
 }
