@@ -28,4 +28,5 @@ drone-helm
 *.out
 .vscode
 .idea
-.vendor
+vendor
+release
