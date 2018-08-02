@@ -9,14 +9,17 @@ import (
 	"os"
 )
 
-var build = "0" // build number set at compile-time
+var (
+	version = "0.0.0"
+	build   = "0"
+)
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "helm plugin"
 	app.Usage = "helm plugin"
 	app.Action = run
-	app.Version = fmt.Sprintf("1.0.%s", build)
+	app.Version = fmt.Sprintf("%s+%s",version, build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "helm_command",

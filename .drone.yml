@@ -1,6 +1,6 @@
 workspace:
   base: /go
-  path: src/github.com/josmo/drone-helm
+  path: src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
 pipeline:
   deps:
     image: golang:1.10
@@ -23,7 +23,13 @@ pipeline:
     - GOARCH=amd64
     - CGO_ENABLED=0
     commands:
-    - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-helm
+    - |
+      if test "${DRONE_TAG}" = ""; then
+        go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/${DRONE_REPO_NAME}
+      else
+        go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/{DRONE_REPO_NAME}
+      fi
+#    - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-helm
 
 #  build_linux_arm64:
 #    image: golang:1.10
@@ -49,10 +55,8 @@ pipeline:
   publish_linux_amd64:
     image: plugins/docker
     group: publish
-    username: josmo
-    repo: peloton/drone-helm
     auto_tag: true
-    secrets: [ docker_password ]
+    secrets: [ docker_password, plugin_repo ]
     dockerfile: Dockerfile
     when:
       event: [ tag, push ]
