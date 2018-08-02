@@ -37,10 +37,7 @@ docker run --rm \
 This repo is setup in a way that if you enable a personal drone server to build your fork it will
  build and publish your image (makes it easier to test PRs and use the image till the contributions get merged)
  
-* Build local ```DRONE_REPO_OWNER=josmo DRONE_REPO_NAME=drone-helm drone exec```
+* Build local ```DRONE_REPO_OWNER=ipedrazas DRONE_REPO_NAME=drone-helm drone exec```
 * on your server just make sure you have DOCKER_USERNAME, DOCKER_PASSWORD, and PLUGIN_REPO set as secrets
  
 
-### Fork Notes
-
-This is currently a fork of ipedrazas/drone-helm which is published to quai. The fork image will be published to dockerhub at peloton/drone-helm in the docs just replace until we know the long term path. 
