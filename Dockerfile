@@ -1,40 +1,17 @@
 #
-# ----- Go Builder Image ------
-#
-FROM golang:1.8-alpine AS builder
-
-RUN apk add --no-cache git
-
-# set working directory
-RUN mkdir -p /go/src/drone-helm
-WORKDIR /go/src/drone-helm
-
-# copy sources
-COPY . .
-
-# add dependencies
-RUN go get
-
-# run tests
-RUN go test -v
-
-# build binary
-RUN go build -v -o "/drone-helm"
-
-#
 # ------ Drone-Helm plugin image ------
 #
 
 FROM alpine:3.6
 MAINTAINER Ivan Pedrazas <ipedrazas@gmail.com>
 
-# Helm version: can be passed at build time (default to v2.6.0)
+# Helm version: can be passed at build time
 ARG VERSION
 ENV VERSION ${VERSION:-v2.9.1}
 ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
 
 ARG KUBECTL
-ENV KUBECTL ${KUBECTL:-v1.10.2}
+ENV KUBECTL ${KUBECTL:-v1.11.0}
 
 RUN set -ex \
   && apk add --no-cache curl ca-certificates \
@@ -49,7 +26,7 @@ RUN set -ex \
 LABEL description="Kubectl and Helm."
 LABEL base="alpine"
 
-COPY --from=builder /drone-helm /bin/drone-helm
+ADD release/linux/amd64/drone-helm /bin/
 COPY kubeconfig /root/.kube/kubeconfig
 
 ENTRYPOINT [ "/bin/drone-helm" ]

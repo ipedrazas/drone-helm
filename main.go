@@ -2,21 +2,24 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/josmo/drone-helm/plugin"
 	"github.com/urfave/cli"
+	"os"
 )
 
-var build = "0" // build number set at compile-time
+var (
+	version = "0.0.0"
+	build   = "0"
+)
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "helm plugin"
 	app.Usage = "helm plugin"
 	app.Action = run
-	app.Version = fmt.Sprintf("1.0.%s", build)
+	app.Version = fmt.Sprintf("%s+%s",version, build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "helm_command",
@@ -149,37 +152,38 @@ func run(c *cli.Context) error {
 	if c.String("env-file") != "" {
 		_ = godotenv.Load(c.String("env-file"))
 	}
-	plugin := Plugin{
-		Config: Config{
-			APIServer:      	c.String("api_server"),
-			Token:          	c.String("token"),
-			Certificate:    	c.String("certificate"),
-			ServiceAccount: 	c.String("service-account"),
-			KubeConfig:     	c.String("kube-config"),
-			HelmCommand:    	c.String("helm_command"),
-			Namespace:      	c.String("namespace"),
-			SkipTLSVerify:  	c.Bool("skip_tls_verify"),
-			Values:         	c.String("values"),
-			ValuesFiles:    	c.String("values_files"),
-			Release:        	c.String("release"),
-			HelmRepos:      	c.StringSlice("helm_repos"),
-			Chart:          	c.String("chart"),
-			Version:        	c.String("chart-version"),
-			Debug:          	c.Bool("debug"),
-			DryRun:         	c.Bool("dry-run"),
-			Secrets:        	c.StringSlice("secrets"),
-			Prefix:        		c.String("prefix"),
-			TillerNs:      		c.String("tiller-ns"),
-			Wait:          		c.Bool("wait"),
-			RecreatePods:   	c.Bool("recreate-pods"),
-			ClientOnly:     	c.Bool("client-only"),
-			CanaryImage:    	c.Bool("canary-image"),
-			Upgrade:			c.Bool("upgrade"),
-			ReuseValues:   		c.Bool("reuse-values"),
-			Timeout:        	c.String("timeout"),
-			Force:          	c.Bool("force"),
-			UpdateDependencies:	c.Bool("update-dependencies"),
+	p := plugin.Plugin{
+		Config: plugin.Config{
+			APIServer:          c.String("api_server"),
+			Token:              c.String("token"),
+			Certificate:        c.String("certificate"),
+			ServiceAccount:     c.String("service-account"),
+			KubeConfig:         c.String("kube-config"),
+			HelmCommand:        c.String("helm_command"),
+			Purge:              c.Bool("purge"),
+			Namespace:          c.String("namespace"),
+			SkipTLSVerify:      c.Bool("skip_tls_verify"),
+			Values:             c.String("values"),
+			ValuesFiles:        c.String("values_files"),
+			Release:            c.String("release"),
+			HelmRepos:          c.StringSlice("helm_repos"),
+			Chart:              c.String("chart"),
+			Version:            c.String("chart-version"),
+			Debug:              c.Bool("debug"),
+			DryRun:             c.Bool("dry-run"),
+			Secrets:            c.StringSlice("secrets"),
+			Prefix:             c.String("prefix"),
+			TillerNs:           c.String("tiller-ns"),
+			Wait:               c.Bool("wait"),
+			RecreatePods:       c.Bool("recreate-pods"),
+			ClientOnly:         c.Bool("client-only"),
+			CanaryImage:        c.Bool("canary-image"),
+			Upgrade:            c.Bool("upgrade"),
+			ReuseValues:        c.Bool("reuse-values"),
+			Timeout:            c.String("timeout"),
+			Force:              c.Bool("force"),
+			UpdateDependencies: c.Bool("update-dependencies"),
 		},
 	}
-	return plugin.Exec()
+	return p.Exec()
 }
