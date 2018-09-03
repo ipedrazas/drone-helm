@@ -20,7 +20,8 @@ pipeline:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: secret.password=${SECRET_PASSWORD}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
     debug: true
     wait: true
@@ -36,7 +37,7 @@ pipeline:
     image: quay.io/ipedrazas/drone-helm
     chart: ./chart/blog
     release: ${DRONE_BRANCH}-blog
-    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     secrets: [ prod_api_server, prod_kubernetes_token ]
     when:
@@ -50,7 +51,7 @@ Use Kubernetes Certificate Authority Data. Just add the `<prefix>_kubernetes_cer
     image: quay.io/ipedrazas/drone-helm
     chart: ./chart/blog
     release: ${DRONE_BRANCH}-blog
-    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     - secrets: [ prod_api_server, prod_kubernetes_token ]
     + secrets: [ prod_api_server, prod_kubernetes_token, prod_kubernetes_certificate ]
@@ -94,7 +95,8 @@ pipeline:
     skip_tls_verify: true
     helm_repos: hb-charts=http://helm-charts.honestbee.com
     chart: hb-charts/hello-world
-    values: image.repository=quay.io/honestbee/hello-drone-helm,image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: image.repository=quay.io/honestbee/hello-drone-helm
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     release: ${DRONE_REPO_NAME}-${DRONE_BRANCH}
     prefix: STAGING
     when:
@@ -152,7 +154,8 @@ pipeline:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: secret.password=${SECRET_PASSWORD}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
     debug: true
     wait: true
@@ -166,7 +169,8 @@ pipeline_production:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: secret.password=${SECRET_PASSWORD}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     debug: true
     wait: true
@@ -209,6 +213,7 @@ docker run --rm \
   -e PLUGIN_RELEASE=my-release \
   -e PLUGIN_CHART=stable/redis \
   -e PLUGIN_VALUES="tag=TAG,api=API" \
+  -e PLUGIN_STRING_VALUES="long_string_value=1234567890" \
   -e PLUGIN_DEBUG=true \
   -e PLUGIN_DRY_RUN=true \
   -e DRONE_BUILD_EVENT=push \
@@ -228,7 +233,7 @@ pipeline_production:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     tiller_ns: operations
     when:
@@ -244,7 +249,7 @@ pipeline_production:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
     dry-run:true
     when:
