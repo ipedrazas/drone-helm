@@ -19,35 +19,36 @@ var KUBECONFIG = "/root/.kube/kubeconfig"
 type (
 	// Config maps the params we need to run Helm
 	Config struct {
-		APIServer      		string   `json:"api_server"`
-		Token          		string   `json:"token"`
-		Certificate    		string   `json:"certificate"`
-		ServiceAccount 		string   `json:"service_account"`
-		KubeConfig     		string   `json:"kube_config"`
-		HelmCommand    		string   `json:"helm_command"`
-		SkipTLSVerify  		bool     `json:"tls_skip_verify"`
-		Namespace      		string   `json:"namespace"`
-		Release        		string   `json:"release"`
-		Chart          		string   `json:"chart"`
-		Version        		string   `json:"version"`
-		Values         		string   `json:"values"`
-		ValuesFiles    		string   `json:"values_files"`
-		Debug          		bool     `json:"debug"`
-		DryRun         		bool     `json:"dry_run"`
-		Secrets        		[]string `json:"secrets"`
-		Prefix         		string   `json:"prefix"`
-		TillerNs       		string   `json:"tiller_ns"`
-		Wait           		bool     `json:"wait"`
-		RecreatePods   		bool     `json:"recreate_pods"`
-		Upgrade        		bool     `json:"upgrade"`
-		CanaryImage    		bool     `json:"canary_image"`
-		ClientOnly     		bool     `json:"client_only"`
-		ReuseValues    		bool     `json:"reuse_values"`
-		Timeout        		string   `json:"timeout"`
-		Force          		bool     `json:"force"`
-		HelmRepos      		[]string `json:"helm_repos"`
-		Purge          	   	bool     `json:"purge"`
-		UpdateDependencies 	bool     `json:"update_dependencies"`
+		APIServer          string   `json:"api_server"`
+		Token              string   `json:"token"`
+		Certificate        string   `json:"certificate"`
+		ServiceAccount     string   `json:"service_account"`
+		KubeConfig         string   `json:"kube_config"`
+		HelmCommand        string   `json:"helm_command"`
+		SkipTLSVerify      bool     `json:"tls_skip_verify"`
+		Namespace          string   `json:"namespace"`
+		Release            string   `json:"release"`
+		Chart              string   `json:"chart"`
+		Version            string   `json:"version"`
+		Values             string   `json:"values"`
+		StringValues       string   `json:"string_values"`
+		ValuesFiles        string   `json:"values_files"`
+		Debug              bool     `json:"debug"`
+		DryRun             bool     `json:"dry_run"`
+		Secrets            []string `json:"secrets"`
+		Prefix             string   `json:"prefix"`
+		TillerNs           string   `json:"tiller_ns"`
+		Wait               bool     `json:"wait"`
+		RecreatePods       bool     `json:"recreate_pods"`
+		Upgrade            bool     `json:"upgrade"`
+		CanaryImage        bool     `json:"canary_image"`
+		ClientOnly         bool     `json:"client_only"`
+		ReuseValues        bool     `json:"reuse_values"`
+		Timeout            string   `json:"timeout"`
+		Force              bool     `json:"force"`
+		HelmRepos          []string `json:"helm_repos"`
+		Purge              bool     `json:"purge"`
+		UpdateDependencies bool     `json:"update_dependencies"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -94,6 +95,10 @@ func setUpgradeCommand(p *Plugin) {
 	if p.Config.Values != "" {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, unQuote(p.Config.Values))
+	}
+	if p.Config.StringValues != "" {
+		upgrade = append(upgrade, "--set-string")
+		upgrade = append(upgrade, unQuote(p.Config.StringValues))
 	}
 	if p.Config.ValuesFiles != "" {
 		for _, valuesFile := range strings.Split(p.Config.ValuesFiles, ",") {
@@ -217,7 +222,6 @@ func doDependencyUpdate(chart string) []string {
 	return dependencyUpdate
 }
 
-
 // Exec default method
 func (p *Plugin) Exec() error {
 	if p.Config.Debug {
@@ -311,6 +315,8 @@ func runCommand(params []string) error {
 
 func resolveSecrets(p *Plugin) {
 	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix, p.Config.Debug)
+	p.Config.StringValues = resolveEnvVar(p.Config.StringValues, p.Config.Prefix, p.Config.Debug)
+
 	if p.Config.APIServer == "" {
 		p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix, p.Config.Debug)
 	}
@@ -384,6 +390,7 @@ func (p *Plugin) debug() {
 	// debug plugin obj
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
 	fmt.Printf("Values: %s \n", p.Config.Values)
+	fmt.Printf("StringValues: %s \n", p.Config.StringValues)
 	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
 	fmt.Printf("Helm Repos: %s \n", p.Config.HelmRepos)
 	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)
