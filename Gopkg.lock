@@ -21,6 +21,14 @@
   revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
 
 [[projects]]
+  branch = "master"
+  digest = "1:87009a0bb1cfbdf3e4659482c9c2259ab669162e3395cf05c63c01f6a0579a4c"
+  name = "github.com/ipedrazas/drone-helm"
+  packages = ["plugin"]
+  pruneopts = "UT"
+  revision = "057547a6f11d0e4dffbf194bfe9e538013bfdbfa"
+
+[[projects]]
   digest = "1:d8cadef127871902b9aaa711a74bf6dd74feeb3f97b67c31b9dcdd02b8284b45"
   name = "github.com/joho/godotenv"
   packages = ["."]
@@ -49,6 +57,7 @@
   input-imports = [
     "github.com/Sirupsen/logrus",
     "github.com/alecthomas/template",
+    "github.com/ipedrazas/drone-helm/plugin",
     "github.com/joho/godotenv",
     "github.com/urfave/cli",
   ]
