@@ -157,30 +157,18 @@ func run(c *cli.Context) error {
 	if c.String("env-file") != "" {
 		_ = godotenv.Load(c.String("env-file"))
 	}
-<<<<<<< HEAD
 	plugin := Plugin{
 		Config: Config{
-=======
-	p := plugin.Plugin{
-		Config: plugin.Config{
->>>>>>> 057547a6f11d0e4dffbf194bfe9e538013bfdbfa
 			APIServer:          c.String("api_server"),
 			Token:              c.String("token"),
 			Certificate:        c.String("certificate"),
 			ServiceAccount:     c.String("service-account"),
 			KubeConfig:         c.String("kube-config"),
 			HelmCommand:        c.String("helm_command"),
-<<<<<<< HEAD
 			Namespace:          c.String("namespace"),
 			SkipTLSVerify:      c.Bool("skip_tls_verify"),
 			Values:             c.String("values"),
 			StringValues:       c.String("string_values"),
-=======
-			Purge:              c.Bool("purge"),
-			Namespace:          c.String("namespace"),
-			SkipTLSVerify:      c.Bool("skip_tls_verify"),
-			Values:             c.String("values"),
->>>>>>> 057547a6f11d0e4dffbf194bfe9e538013bfdbfa
 			ValuesFiles:        c.String("values_files"),
 			Release:            c.String("release"),
 			HelmRepos:          c.StringSlice("helm_repos"),
