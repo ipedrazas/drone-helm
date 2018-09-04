@@ -1,18 +1,4 @@
-# Helm (Kubernetes) plugin for drone.io
-
-[![Build Status](https://drone.pelo.tech/api/badges/josmo/drone-helm/status.svg)](https://drone.pelo.tech/josmo/drone-helm)
-[![Go Doc](https://godoc.org/github.com/josmo/drone-helm?status.svg)](http://godoc.org/github.com/josmo/drone-helm)
-[![Go Report](https://goreportcard.com/badge/github.com/josmo/drone-helm)](https://goreportcard.com/report/github.com/josmo/drone-helm)
-[![](https://images.microbadger.com/badges/image/peloton/drone-helm.svg)](https://microbadger.com/images/peloton/drone-helm "Get your own image badge on microbadger.com")
-
-This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
-
-* Current `helm` version: 2.9.1
-* Current `kubectl` version: 1.11.0
-
-## Drone Pipeline Usage
-
-For the usage information and a listing of the available options please take a look at [the docs](DOCS.md).
+### Simple Usage
 
 For example, this configuration will deploy my-app using a chart located in the repo called `my-chart`
 
@@ -23,8 +9,7 @@ pipeline:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: secret.password=${SECRET_PASSWORD}
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
     debug: true
     wait: true
@@ -40,7 +25,7 @@ pipeline:
     image: quay.io/ipedrazas/drone-helm
     chart: ./chart/blog
     release: ${DRONE_BRANCH}-blog
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     secrets: [ prod_api_server, prod_kubernetes_token ]
     when:
@@ -54,7 +39,7 @@ Use Kubernetes Certificate Authority Data. Just add the `<prefix>_kubernetes_cer
     image: quay.io/ipedrazas/drone-helm
     chart: ./chart/blog
     release: ${DRONE_BRANCH}-blog
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     - secrets: [ prod_api_server, prod_kubernetes_token ]
     + secrets: [ prod_api_server, prod_kubernetes_token, prod_kubernetes_certificate ]
@@ -98,8 +83,7 @@ pipeline:
     skip_tls_verify: true
     helm_repos: hb-charts=http://helm-charts.honestbee.com
     chart: hb-charts/hello-world
-    values: image.repository=quay.io/honestbee/hello-drone-helm
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: image.repository=quay.io/honestbee/hello-drone-helm,image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     release: ${DRONE_REPO_NAME}-${DRONE_BRANCH}
     prefix: STAGING
     when:
@@ -157,8 +141,7 @@ pipeline:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: secret.password=${SECRET_PASSWORD}
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
     debug: true
     wait: true
@@ -172,8 +155,7 @@ pipeline_production:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    values: secret.password=${SECRET_PASSWORD}
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: secret.password=${SECRET_PASSWORD},image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     debug: true
     wait: true
@@ -205,24 +187,6 @@ Get the token for the default service account in the default namespace:
 KUBERNETES_TOKEN=$(kubectl get secret $(kubectl get sa default -o jsonpath='{.secrets[].name}{"\n"}') -o jsonpath="{.data.token}" | base64 -D)
 ```
 
-Run the local image (or replace `drone-helm` with `quay.io/ipedrazas/drone-helm`:
-
-```bash
-docker run --rm \
-  -e API_SERVER="https://$(minikube ip):8443" \
-  -e KUBERNETES_TOKEN="${KUBERNETES_TOKEN}" \
-  -e PLUGIN_NAMESPACE=default \
-  -e PLUGIN_SKIP_TLS_VERIFY=true \
-  -e PLUGIN_RELEASE=my-release \
-  -e PLUGIN_CHART=stable/redis \
-  -e PLUGIN_VALUES="tag=TAG,api=API" \
-  -e PLUGIN_STRING_VALUES="long_string_value=1234567890" \
-  -e PLUGIN_DEBUG=true \
-  -e PLUGIN_DRY_RUN=true \
-  -e DRONE_BUILD_EVENT=push \
-  quay.io/ipedrazas/drone-helm
-```
-
 ## Advanced customisations and debugging
 
 This plugin installs [Tiller](https://github.com/kubernetes/helm/blob/master/docs/architecture.md) in the cluster, if you want to specify the namespace where `tiller` ins installed, use the `tiller_ns` attribute.
@@ -236,7 +200,7 @@ pipeline_production:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: PROD
     tiller_ns: operations
     when:
@@ -252,7 +216,7 @@ pipeline_production:
     skip_tls_verify: true
     chart: ./charts/my-chart
     release: ${DRONE_BRANCH}
-    string_values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
     dry-run:true
     when:
@@ -261,10 +225,6 @@ pipeline_production:
 
 Happy Helming!
 
-This repo is setup in a way that if you enable a personal drone server to build your fork it will
- build and publish your image (makes it easier to test PRs and use the image till the contributions get merged)
- 
-* Build local ```DRONE_REPO_OWNER=ipedrazas DRONE_REPO_NAME=drone-helm drone exec```
-* on your server just make sure you have DOCKER_USERNAME, DOCKER_PASSWORD, and PLUGIN_REPO set as secrets
- 
+## Known issues
 
+* Drone secrets that are part of `values` can be leaked in debug mode and in case of error as the whole helm command will be printed in the logs. See #52
