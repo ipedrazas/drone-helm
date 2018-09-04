@@ -159,7 +159,7 @@ func run(c *cli.Context) error {
 		_ = godotenv.Load(c.String("env-file"))
 	}
 	p := plugin.Plugin{
-		Config: Config{
+		Config: plugin.Config{
 			APIServer:          c.String("api_server"),
 			Token:              c.String("token"),
 			Certificate:        c.String("certificate"),
