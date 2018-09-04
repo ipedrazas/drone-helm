@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/joho/godotenv"
 	"github.com/josmo/drone-helm/plugin"
 	"github.com/urfave/cli"
-	"os"
 )
 
 var (
@@ -19,7 +20,7 @@ func main() {
 	app.Name = "helm plugin"
 	app.Usage = "helm plugin"
 	app.Action = run
-	app.Version = fmt.Sprintf("%s+%s",version, build)
+	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "helm_command",
@@ -157,7 +158,7 @@ func run(c *cli.Context) error {
 	if c.String("env-file") != "" {
 		_ = godotenv.Load(c.String("env-file"))
 	}
-	plugin := Plugin{
+	p := plugin.Plugin{
 		Config: Config{
 			APIServer:          c.String("api_server"),
 			Token:              c.String("token"),
