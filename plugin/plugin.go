@@ -31,6 +31,7 @@ type (
 		Chart              string   `json:"chart"`
 		Version            string   `json:"version"`
 		Values             string   `json:"values"`
+		StringValues       string   `json:"string_values"`
 		ValuesFiles        string   `json:"values_files"`
 		Debug              bool     `json:"debug"`
 		DryRun             bool     `json:"dry_run"`
@@ -94,6 +95,10 @@ func setUpgradeCommand(p *Plugin) {
 	if p.Config.Values != "" {
 		upgrade = append(upgrade, "--set")
 		upgrade = append(upgrade, unQuote(p.Config.Values))
+	}
+	if p.Config.StringValues != "" {
+		upgrade = append(upgrade, "--set-string")
+		upgrade = append(upgrade, unQuote(p.Config.StringValues))
 	}
 	if p.Config.ValuesFiles != "" {
 		for _, valuesFile := range strings.Split(p.Config.ValuesFiles, ",") {
@@ -307,6 +312,8 @@ func runCommand(params []string) error {
 
 func resolveSecrets(p *Plugin) {
 	p.Config.Values = resolveEnvVar(p.Config.Values, p.Config.Prefix, p.Config.Debug)
+	p.Config.StringValues = resolveEnvVar(p.Config.StringValues, p.Config.Prefix, p.Config.Debug)
+
 	if p.Config.APIServer == "" {
 		p.Config.APIServer = resolveEnvVar("${API_SERVER}", p.Config.Prefix, p.Config.Debug)
 	}
@@ -380,6 +387,7 @@ func (p *Plugin) debug() {
 	// debug plugin obj
 	fmt.Printf("Api server: %s \n", p.Config.APIServer)
 	fmt.Printf("Values: %s \n", p.Config.Values)
+	fmt.Printf("StringValues: %s \n", p.Config.StringValues)
 	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
 	fmt.Printf("Helm Repos: %s \n", p.Config.HelmRepos)
 	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)

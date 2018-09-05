@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/joho/godotenv"
-	"github.com/josmo/drone-helm/plugin"
-	"github.com/urfave/cli"
 	"os"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/ipedrazas/drone-helm/plugin"
+	"github.com/joho/godotenv"
+	"github.com/urfave/cli"
 )
 
 var (
@@ -19,7 +20,7 @@ func main() {
 	app.Name = "helm plugin"
 	app.Usage = "helm plugin"
 	app.Action = run
-	app.Version = fmt.Sprintf("%s+%s",version, build)
+	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "helm_command",
@@ -61,6 +62,11 @@ func main() {
 			Name:   "values",
 			Usage:  "Kubernetes helm release",
 			EnvVar: "PLUGIN_VALUES,VALUES",
+		},
+		cli.StringFlag{
+			Name:   "string_values",
+			Usage:  "Kubernetes helm release",
+			EnvVar: "PLUGIN_STRING_VALUES,STRING_VALUES",
 		},
 		cli.StringFlag{
 			Name:   "values_files",
@@ -160,10 +166,10 @@ func run(c *cli.Context) error {
 			ServiceAccount:     c.String("service-account"),
 			KubeConfig:         c.String("kube-config"),
 			HelmCommand:        c.String("helm_command"),
-			Purge:              c.Bool("purge"),
 			Namespace:          c.String("namespace"),
 			SkipTLSVerify:      c.Bool("skip_tls_verify"),
 			Values:             c.String("values"),
+			StringValues:       c.String("string_values"),
 			ValuesFiles:        c.String("values_files"),
 			Release:            c.String("release"),
 			HelmRepos:          c.StringSlice("helm_repos"),

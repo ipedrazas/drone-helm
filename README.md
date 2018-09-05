@@ -26,6 +26,7 @@ docker run --rm \
   -e PLUGIN_RELEASE=my-release \
   -e PLUGIN_CHART=stable/redis \
   -e PLUGIN_VALUES="tag=TAG,api=API" \
+  -e PLUGIN_STRING_VALUES="long_string_value=1234567890" \
   -e PLUGIN_DEBUG=true \
   -e PLUGIN_DRY_RUN=true \
   -e DRONE_BUILD_EVENT=push \
@@ -40,4 +41,3 @@ This repo is setup in a way that if you enable a personal drone server to build 
 * Build local ```DRONE_REPO_OWNER=ipedrazas DRONE_REPO_NAME=drone-helm drone exec```
 * on your server just make sure you have DOCKER_USERNAME, DOCKER_PASSWORD, and PLUGIN_REPO set as secrets
  
-
