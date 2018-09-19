@@ -43,6 +43,7 @@ type (
 		Upgrade            bool     `json:"upgrade"`
 		CanaryImage        bool     `json:"canary_image"`
 		ClientOnly         bool     `json:"client_only"`
+		SkipRefresh        bool     `json:"skip_refresh"`
 		ReuseValues        bool     `json:"reuse_values"`
 		Timeout            string   `json:"timeout"`
 		Force              bool     `json:"force"`
@@ -200,6 +201,9 @@ func doHelmInit(p *Plugin) []string {
 	}
 	if p.Config.ClientOnly {
 		init = append(init, "--client-only")
+	}
+	if p.Config.SkipRefresh {
+		init = append(init, "--skip-refresh")
 	}
 	if p.Config.Upgrade {
 		init = append(init, "--upgrade")
