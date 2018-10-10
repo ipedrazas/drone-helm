@@ -31,10 +31,6 @@ ignored = ["sort"]
   version = "1.0.2"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/alecthomas/template"
-
-[[constraint]]
   name = "github.com/joho/godotenv"
   version = "1.1.0"
 

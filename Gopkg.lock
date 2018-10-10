@@ -11,17 +11,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:315c5f2f60c76d89b871c73f9bd5fe689cad96597afd50fb9992228ef80bdd34"
-  name = "github.com/alecthomas/template"
-  packages = [
-    ".",
-    "parse",
-  ]
-  pruneopts = "UT"
-  revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
-
-[[projects]]
-  branch = "master"
   digest = "1:87009a0bb1cfbdf3e4659482c9c2259ab669162e3395cf05c63c01f6a0579a4c"
   name = "github.com/ipedrazas/drone-helm"
   packages = ["plugin"]
@@ -56,7 +45,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/Sirupsen/logrus",
-    "github.com/alecthomas/template",
     "github.com/ipedrazas/drone-helm/plugin",
     "github.com/joho/godotenv",
     "github.com/urfave/cli",
