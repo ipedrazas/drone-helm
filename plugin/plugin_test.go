@@ -225,11 +225,11 @@ func TestResolveSecrets(t *testing.T) {
 
 	// Test resolving provided values
 	testInput := []struct {
-		server        string
-		values        string
+		server       string
+		values       string
 		stringValues string
-		token         string
-		account       string
+		token        string
+		account      string
 	}{
 		{server: "http://apiserver2", token: "123456", account: "helm2", values: "aval=test", stringValues: "long_string_value=1234567890"},
 	}
