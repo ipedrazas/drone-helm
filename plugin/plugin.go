@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alecthomas/template"
+	"text/template"
 )
 
 var HELM_BIN = "/bin/helm"
