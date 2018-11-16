@@ -149,7 +149,7 @@ func setHelmCommand(p *Plugin) {
 		setDeleteCommand(p)
 	default:
 		switch os.Getenv("DRONE_BUILD_EVENT") {
-		case "push", "tag", "deployment", "pull_request":
+		case "push", "tag", "deployment", "pull_request", "promote", "rollback":
 			setUpgradeCommand(p)
 		case "delete":
 			setDeleteCommand(p)
