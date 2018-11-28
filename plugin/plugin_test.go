@@ -42,6 +42,48 @@ func TestInitialiseKubeconfig(t *testing.T) {
 	if !strings.Contains(kubeConfigStr, "my-cert-data") {
 		t.Errorf("Kubeconfig doesn't render certificate")
 	}
+	if strings.Contains(kubeConfigStr, "aws-iam-authenticator") {
+		t.Errorf("Kubeconfig renders EKS cluster configuration")
+	}
+}
+
+func TestInitialiseKubeconfigEKS(t *testing.T) {
+
+	plugin := Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Certificate:   "my-cert-data",
+			EKSCluster:    "my-eks-cluster-name",
+			EKSRoleARN:    "my-eks-role-arn",
+			HelmCommand:   "",
+			Namespace:     "default",
+			SkipTLSVerify: false, // if set the true with Certificate, this test will fail
+		},
+	}
+
+	configfile := "config3.test"
+	initialiseKubeconfig(&plugin.Config, "../kubeconfig", configfile)
+	data, err := ioutil.ReadFile(configfile)
+	if err != nil {
+		t.Errorf("Error reading file %v", err)
+	}
+	kubeConfigStr := string(data)
+
+	if strings.Contains(kubeConfigStr, "token:") {
+		t.Errorf("Kubeconfig renders token")
+	}
+	if !strings.Contains(kubeConfigStr, "http://myapiserver") {
+		t.Errorf("Kubeconfig doesn't render APIServer")
+	}
+	if !strings.Contains(kubeConfigStr, "my-cert-data") {
+		t.Errorf("Kubeconfig doesn't render certificate")
+	}
+	if !strings.Contains(kubeConfigStr, "my-eks-cluster-name") {
+		t.Errorf("Kubeconfig doesn't render EKS cluster name")
+	}
+	if !strings.Contains(kubeConfigStr, "my-eks-role-arn") {
+		t.Errorf("Kubeconfig doesn't render EKS role ARN")
+	}
 }
 
 func TestGetHelmCommandEmptyPushEvent(t *testing.T) {

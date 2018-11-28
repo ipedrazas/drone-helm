@@ -30,6 +30,8 @@ type (
 		Release            string   `json:"release"`
 		Chart              string   `json:"chart"`
 		Version            string   `json:"version"`
+		EKSCluster         string   `json:"eks_cluster"`
+		EKSRoleARN         string   `json:"eks_role_arn"`
 		Values             string   `json:"values"`
 		StringValues       string   `json:"string_values"`
 		ValuesFiles        string   `json:"values_files"`
@@ -234,8 +236,10 @@ func (p *Plugin) Exec() error {
 		if p.Config.APIServer == "" {
 			return fmt.Errorf("Error: API Server is needed to deploy.")
 		}
-		if p.Config.Token == "" {
-			return fmt.Errorf("Error: Token is needed to deploy.")
+		if p.Config.EKSCluster == "" {
+			if p.Config.Token == "" {
+				return fmt.Errorf("Error: Token is needed to deploy.")
+			}
 		}
 		initialiseKubeconfig(&p.Config, KUBECONFIG, p.Config.KubeConfig)
 	}
