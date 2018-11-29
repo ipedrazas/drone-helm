@@ -555,3 +555,30 @@ func TestResolveSecretsFallback(t *testing.T) {
 		t.Errorf("envar ${NOTTOKEN} has not been resolved to 99999, not using prefix")
 	}
 }
+func TestHelmInitByAliyunStableRepo(t *testing.T) {
+	plugin := &Plugin{
+		Config: Config{
+			HelmCommand:   "",
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Debug:         true,
+			DryRun:        true,
+			Chart:         "./chart/test",
+			Release:       "test-release",
+			Prefix:        "MY",
+			Values:        "image.tag=$TAG,api=${API_SERVER},nameOverride=my-over-app,second.tag=${TAG}",
+			StringValues:  "long_string_value=1234567890",
+			StableRepoURL: "https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts",
+		},
+	}
+	init := doHelmInit(plugin)
+	result := strings.Join(init, " ")
+	expected := "init "
+	if plugin.Config.StableRepoURL != "" {
+		expected = expected + "--stable-repo-url"
+	}
+
+	if expected != result {
+		t.Error("Helm cannot init for stable repository")
+	}
+}

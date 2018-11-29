@@ -279,13 +279,33 @@ pipeline_production:
     release: ${DRONE_BRANCH}
     values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
     prefix: STAGING
-    dry-run:true
+    dry-run: true
     when:
       branch: [master]
 ```
+
+This plugin init stable repository in the cluster, if you want to specify the stable repository, use the `stable_repo_url` attribute.
+
+The following example will init `stable_repo_url` in the `https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts` repo:
+
+```YAML
+pipeline_production:
+  helm_deploy:
+    image: quay.io/ipedrazas/drone-helm
+    skip_tls_verify: true
+    chart: ./charts/my-chart
+    release: ${DRONE_BRANCH}
+    values: image.tag=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    prefix: PROD
+    stable_repo_url: https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+    when:
+      branch: [master]
+```
+
 
 Happy Helming!
 
 ## Known issues
 
 * Drone secrets that are part of `values` can be leaked in debug mode and in case of error as the whole helm command will be printed in the logs. See #52
+

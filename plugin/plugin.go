@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
 	"text/template"
 )
 
@@ -51,6 +50,7 @@ type (
 		HelmRepos          []string `json:"helm_repos"`
 		Purge              bool     `json:"purge"`
 		UpdateDependencies bool     `json:"update_dependencies"`
+		StableRepoURL      string   `json:"stable_repo_url"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -196,6 +196,10 @@ func doHelmRepoAdd(repo string) ([]string, error) {
 func doHelmInit(p *Plugin) []string {
 	init := make([]string, 1)
 	init[0] = "init"
+	if p.Config.StableRepoURL != "" {
+		init = append(init, "--stable-repo-url")
+		init = append(init, p.Config.StableRepoURL)
+	}
 	if p.Config.TillerNs != "" {
 		init = append(init, "--tiller-namespace")
 		init = append(init, p.Config.TillerNs)
