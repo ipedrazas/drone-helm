@@ -534,8 +534,8 @@ func TestHelmInitByAliyunStableRepo(t *testing.T) {
 	expected := "init "
 	if plugin.Config.StableRepoURL != "" {
 		expected = expected + "--stable-repo-url"
+		expected = expected + " " + plugin.Config.StableRepoURL
 	}
-
 	if expected != result {
 		t.Error("Helm cannot init for stable repository")
 	}
