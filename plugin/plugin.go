@@ -395,6 +395,7 @@ func (p *Plugin) debug() {
 	fmt.Printf("Secrets: %s \n", p.Config.Secrets)
 	fmt.Printf("Helm Repos: %s \n", p.Config.HelmRepos)
 	fmt.Printf("ValuesFiles: %s \n", p.Config.ValuesFiles)
+	fmt.Printf("StableRepoURL: %s \n", p.Config.StableRepoURL)
 	kubeconfig, err := ioutil.ReadFile(KUBECONFIG)
 	if err == nil {
 		fmt.Println(string(kubeconfig))

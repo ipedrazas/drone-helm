@@ -149,7 +149,7 @@ func main() {
 			EnvVar: "PLUGIN_UPDATE_DEPENDENCIES,UPDATE_DEPENDENCIES",
 		},
 		cli.StringFlag{
-			Name:   "stable-repo-url",
+			Name:   "stable_repo_url",
 			Usage:  "URL for stable repository (default 'https://kubernetes-charts.storage.googleapis.com')",
 			EnvVar: "PLUGIN_STABLE_REPO_URL,STABLE_REPO_URL",
 		},
