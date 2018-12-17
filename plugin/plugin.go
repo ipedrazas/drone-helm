@@ -162,7 +162,7 @@ func setHelmCommand(p *Plugin) {
 
 }
 
-var repoExp = regexp.MustCompile(`^(?P<name>[\w-]+)=(?P<url>(http|https)://[\w-./:]+)`)
+var repoExp = regexp.MustCompile(`^(?P<name>[\w-]+)=(?P<url>(http|https)://[\w-./:@-]+)`)
 
 // parseRepo returns map of regex capture groups (name, url)
 func parseRepo(repo string) (map[string]string, error) {
