@@ -171,6 +171,30 @@ func TestGetHelmDeleteCommand(t *testing.T) {
 	}
 }
 
+func TestGetHelmCommandLint(t *testing.T) {
+	os.Setenv("DRONE_BUILD_EVENT", "push")
+	plugin := &Plugin{
+		Config: Config{
+			APIServer:     "http://myapiserver",
+			Token:         "secret-token",
+			HelmCommand:   "lint",
+			Namespace:     "default",
+			SkipTLSVerify: true,
+			Chart:         "./chart/test",
+			Values:        `"image.tag=v.0.1.0,nameOverride=my-over-app"`,
+			StringValues:  `"long_string_value=1234567890"`,
+		},
+	}
+	setHelmCommand(plugin)
+	res := strings.Join(plugin.command[:], " ")
+	expected := "lint ./chart/test --set image.tag=v.0.1.0,nameOverride=my-over-app --set-string long_string_value=1234567890 --namespace default"
+	if res != expected {
+		t.Errorf("Result is %s and we expected %s", res, expected)
+	}
+}
+
+
+
 func TestGetHelmDeleteCommandOverried(t *testing.T) {
 	os.Setenv("DRONE_BUILD_EVENT", "deployment")
 	plugin := &Plugin{
