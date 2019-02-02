@@ -1,86 +1,48 @@
+kind: pipeline
+name: default
+
 workspace:
   base: /go
   path: src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
-pipeline:
-  deps:
+
+
+steps:
+  - name: deps
     image: golang:1.10
     pull: true
     commands:
-    - go get -u github.com/golang/dep/cmd/dep
-    - dep ensure -update
+      - go get -u github.com/golang/dep/cmd/dep
+      - dep ensure -update
 
-  test:
+  - name: test
     image: golang:1.10
     commands:
-    - go vet
-    - go test ./... -cover -coverprofile=coverage.out
+      - go vet
+      - go test ./... -cover -coverprofile=coverage.out
 
-  build_linux_amd64:
+  - name: build_linux_amd64
     image: golang:1.10
-    group: build
     environment:
-    - GOOS=linux
-    - GOARCH=amd64
-    - CGO_ENABLED=0
+      GOOS: linux
+      GOARCH: amd64
+      CGO_ENABLED: 0
     commands:
-    - |
-      if test "${DRONE_TAG}" = ""; then
-        go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/${DRONE_REPO_NAME}
-      else
-        go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/${DRONE_REPO_NAME}
-      fi
-#    - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-helm
-
-#  build_linux_arm64:
-#    image: golang:1.10
-#    group: build
-#    environment:
-#    - GOOS=linux
-#    - GOARCH=arm64
-#    - CGO_ENABLED=0
-#    commands:
-#    - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-helm
-#
-#  build_linux_arm:
-#    image: golang:1.10
-#    group: build
-#    environment:
-#    - GOOS=linux
-#    - GOARCH=arm
-#    - CGO_ENABLED=0
-#    - GOARM=7
-#    commands:
-#    - go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-helm
-
-  publish_linux_amd64:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/${DRONE_REPO_NAME}
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/${DRONE_REPO_NAME}
+        fi
+  - name: publish_linux_amd64
     image: plugins/docker
-    group: publish
     auto_tag: true
-    secrets: [ docker_password, docker_username, plugin_repo ]
-    dockerfile: Dockerfile
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      dockerfile: Dockerfile
+      repo:
+        from_secret: dockerhub_repo
     when:
       event: [ tag, push ]
-
-#  publish_linux_arm64:
-#    image: plugins/docker
-#    group: publish
-#    username: josmo
-#    repo: peloton/drone-helm
-#    auto_tag: true
-#    auto_tag_suffix: linux-arm64
-#    secrets: [ docker_password ]
-#    dockerfile: Dockerfile.arm64
-#    when:
-#      event: [ tag, push ]
-#
-#  publish_linux_arm:
-#    image: plugins/docker
-#    group: publish
-#    username: josmo
-#    repo: peloton/drone-helm
-#    auto_tag: true
-#    auto_tag_suffix: linux-arm
-#    secrets: [ docker_password ]
-#    dockerfile: Dockerfile.arm
-#    when:
-#      event: [ tag, push ]
