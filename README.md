@@ -33,6 +33,22 @@ docker run --rm \
   quay.io/ipedrazas/drone-helm
 ```
 
+### Troubleshooting
+
+If you see this problem: `Error: API Server is needed to deploy.` It's usually because you haven't a secret that specifies the `API_SERVER` or the `KUBERNETES_TOKEN`.
+
+As [one000mph](https://github.com/one000mph) commented in an issue, setting the right `PREFIX` and secrets usually solves the problem.
+
+```
+export ACTION=add
+    export REPO=org/myrepo
+    export PREFIX=prod_
+    # export CLUSTER_URI, UNENCODED_TOKEN, BASE64_CERT
+    drone secret $ACTION --repository $REPO --name "${PREFIX}api_server" --value $CLUSTER_URI
+    drone secret $ACTION --repository $REPO --name "${PREFIX}kubernetes_token" --value $UNENCODED_TOKEN
+    drone secret $ACTION --repository $REPO --name "${PREFIX}kubernetes_certificate" --value $BASE64_CERT```
+```
+
 ### Contribution
 
 This repo is setup in a way that if you enable a personal drone server to build your fork it will
