@@ -1,14 +1,15 @@
 # Helm (Kubernetes) plugin for drone.io
 
-[![Build Status](https://cloud.drone.io/api/badges/josmo/drone-helm/status.svg)](https://cloud.drone.io/josmo/drone-helm)
-[![Go Doc](https://godoc.org/github.com/josmo/drone-helm?status.svg)](http://godoc.org/github.com/josmo/drone-helm)
-[![Go Report](https://goreportcard.com/badge/github.com/josmo/drone-helm)](https://goreportcard.com/report/github.com/josmo/drone-helm)
-[![](https://images.microbadger.com/badges/image/peloton/drone-helm.svg)](https://microbadger.com/images/peloton/drone-helm "Get your own image badge on microbadger.com")
+[![Build Status](https://cloud.drone.io/api/badges/ipedrazas/drone-helm/status.svg)](https://cloud.drone.io/ipedrazas/drone-helm)
+[![Docker Repository on Quay](https://quay.io/repository/ipedrazas/drone-helm/status "Docker Repository on Quay")](https://quay.io/repository/ipedrazas/drone-helm)
+[![Go Doc](https://godoc.org/github.com/ipedrazas/drone-helm?status.svg)](http://godoc.org/github.com/ipedrazas/drone-helm)
+[![Go Report](https://goreportcard.com/badge/github.com/ipedrazas/drone-helm)](https://goreportcard.com/report/github.com/ipedrazas/drone-helm)
+[![](https://images.microbadger.com/badges/image/ipedrazas/drone-helm.svg)](https://microbadger.com/images/ipedrazas/drone-helm "Get your own image badge on microbadger.com")
 
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
-* Current `helm` version: 2.11.0
-* Current `kubectl` version: 1.11.2
+* Current `helm` version: 2.12.2
+* Current `kubectl` version: 1.13.2
 
 ## Drone Pipeline Usage
 
