@@ -42,7 +42,8 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: Dockerfile
-      repo:
-        from_secret: dockerhub_repo
+      repo: quay.io/ipedrazas/drone-helm
+      registry: quay.io
+      
     when:
       event: [ tag, push ]
