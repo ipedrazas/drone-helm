@@ -33,6 +33,7 @@ steps:
         else
           go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/${DRONE_REPO_NAME}
         fi
+
   - name: publish_linux_amd64
     image: plugins/docker
     auto_tag: true
@@ -44,6 +45,5 @@ steps:
       dockerfile: Dockerfile
       repo: quay.io/ipedrazas/drone-helm
       registry: quay.io
-      
     when:
       event: [ tag, push ]

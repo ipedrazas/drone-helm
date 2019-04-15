@@ -13,6 +13,12 @@ ENV FILENAME helm-${VERSION}-linux-amd64.tar.gz
 ARG KUBECTL
 ENV KUBECTL ${KUBECTL:-v1.11.2}
 
+ARG PLUGINS
+ENV PLUGINS ${PLUGINS}
+
+ARG PLUGIN_DEPS
+ENV PLUGIN_DEPS ${PLUGIN_DEPS}
+
 RUN set -ex \
   && apk add --no-cache curl ca-certificates \
   && curl -o /tmp/${FILENAME} http://storage.googleapis.com/kubernetes-helm/${FILENAME} \
@@ -24,7 +30,12 @@ RUN set -ex \
   && mv /tmp/kubectl /bin/kubectl \
   && chmod +x /tmp/aws-iam-authenticator \
   && mv /tmp/aws-iam-authenticator /bin/aws-iam-authenticator \
-  && rm -rf /tmp/*
+  && rm -rf /tmp/* \
+  && if [ "${PLUGINS}" != "" ]; then \
+       apk add --no-cache ${PLUGIN_DEPS} git; \
+       HELM_HOME=/root/.helm helm init --client-only; \
+       for plugin in ${PLUGINS}; do helm plugin install ${plugin}; done; \
+     fi
 
 LABEL description="Kubectl and Helm."
 LABEL base="alpine"
