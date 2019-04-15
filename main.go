@@ -114,6 +114,11 @@ func main() {
 			EnvVar: "PLUGIN_WAIT,WAIT",
 		},
 		cli.BoolFlag{
+			Name:   "atomic",
+			Usage:  "if set, upgrade process rolls back changes made in case of failed upgrade, also sets --wait flag",
+			EnvVar: "PLUGIN_ATOMIC,ATOMIC",
+		},
+		cli.BoolFlag{
 			Name:   "recreate-pods",
 			Usage:  "performs pods restart for the resource if applicable",
 			EnvVar: "PLUGIN_RECREATE_PODS,RECREATE_PODS",
@@ -198,6 +203,7 @@ func run(c *cli.Context) error {
 			Prefix:             c.String("prefix"),
 			TillerNs:           c.String("tiller-ns"),
 			Wait:               c.Bool("wait"),
+			Atomic:             c.Bool("atomic"),
 			RecreatePods:       c.Bool("recreate-pods"),
 			ClientOnly:         c.Bool("client-only"),
 			CanaryImage:        c.Bool("canary-image"),

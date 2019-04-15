@@ -40,6 +40,7 @@ type (
 		Prefix             string   `json:"prefix"`
 		TillerNs           string   `json:"tiller_ns"`
 		Wait               bool     `json:"wait"`
+		Atomic             bool     `json:"atomic"`
 		RecreatePods       bool     `json:"recreate_pods"`
 		Upgrade            bool     `json:"upgrade"`
 		CanaryImage        bool     `json:"canary_image"`
@@ -122,8 +123,11 @@ func setUpgradeCommand(p *Plugin) {
 	if p.Config.Debug {
 		upgrade = append(upgrade, "--debug")
 	}
-	if p.Config.Wait {
+	if p.Config.Wait && !p.Config.Atomic {
 		upgrade = append(upgrade, "--wait")
+	}
+	if p.Config.Atomic {
+		upgrade = append(upgrade, "--atomic")
 	}
 	if p.Config.RecreatePods {
 		upgrade = append(upgrade, "--recreate-pods")
