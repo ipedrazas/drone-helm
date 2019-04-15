@@ -51,6 +51,7 @@ type (
 		Purge              bool     `json:"purge"`
 		UpdateDependencies bool     `json:"update_dependencies"`
 		StableRepoURL      string   `json:"stable_repo_url"`
+		HelmSecrets        bool     `json:"helm_secrets"`
 	}
 	// Plugin default
 	Plugin struct {
@@ -138,6 +139,9 @@ func setUpgradeCommand(p *Plugin) {
 	if p.Config.Force {
 		upgrade = append(upgrade, "--force")
 	}
+	if p.Config.HelmSecrets {
+		upgrade = append([]string{"secrets"}, upgrade...)
+	}
 	p.command = upgrade
 }
 
@@ -175,6 +179,10 @@ func setLintCommand(p *Plugin) {
 
 	if p.Config.Debug {
 		lint = append(lint, "--debug")
+	}
+
+	if p.Config.HelmSecrets {
+		lint = append([]string{"secrets"}, lint...)
 	}
 
 	p.command = lint

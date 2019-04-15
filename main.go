@@ -163,6 +163,11 @@ func main() {
 			Usage:  "URL for stable repository (default 'https://kubernetes-charts.storage.googleapis.com')",
 			EnvVar: "PLUGIN_STABLE_REPO_URL,STABLE_REPO_URL",
 		},
+		cli.BoolFlag{
+			Name:   "helm_secrets",
+			Usage:  "use the helm-secrets plugin for lint and upgrade commands",
+			EnvVar: "PLUGIN_HELM_SECRETS,HELM_SECRETS",
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
