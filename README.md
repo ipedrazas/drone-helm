@@ -8,8 +8,8 @@
 
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
-* Current `helm` version: 2.12.2
-* Current `kubectl` version: 1.13.2
+* Current `helm` version: 2.14.1
+* Current `kubectl` version: 1.14.3
 
 ## Drone Pipeline Usage
 
