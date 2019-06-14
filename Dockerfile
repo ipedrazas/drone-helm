@@ -30,7 +30,7 @@ RUN set -ex \
   && curl -o /tmp/aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator \
   && chmod +x /tmp/aws-iam-authenticator \
   && mv /tmp/aws-iam-authenticator /bin/aws-iam-authenticator 
-RUN PREFIX=/ /bin/setup-environments.sh
+RUN /bin/setup-environments.sh
 RUN rm -rf /tmp/*
 
 LABEL description="Kubectl and Helm."
