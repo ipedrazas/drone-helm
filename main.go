@@ -134,6 +134,11 @@ func main() {
 			EnvVar: "PLUGIN_CLIENT_ONLY,CLIENT_ONLY",
 		},
 		cli.BoolFlag{
+			Name:   "skip-refresh",
+			Usage:  "if set, it will not refresh (download) the local repository cache",
+			EnvVar: "PLUGIN_SKIP_REFRESH,SKIP_REFRESH",
+		},
+		cli.BoolFlag{
 			Name:   "reuse-values",
 			Usage:  "when upgrading, reuse the last release's values, and merge in any new values",
 			EnvVar: "PLUGIN_REUSE_VALUES,REUSE_VALUES",
@@ -200,6 +205,7 @@ func run(c *cli.Context) error {
 			Wait:               c.Bool("wait"),
 			RecreatePods:       c.Bool("recreate-pods"),
 			ClientOnly:         c.Bool("client-only"),
+			SkipRefresh:        c.Bool("skip-refresh"),
 			CanaryImage:        c.Bool("canary-image"),
 			Upgrade:            c.Bool("upgrade"),
 			ReuseValues:        c.Bool("reuse-values"),
