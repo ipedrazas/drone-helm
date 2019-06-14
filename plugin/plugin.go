@@ -12,7 +12,9 @@ import (
 	"text/template"
 )
 
-var HELM_BIN = "/bin/helm"
+// use $PATH to locate the currently activated helm binary
+// do not harcode the full binary path
+var HELM_BIN = "helm"
 var KUBECONFIG = "/root/.kube/kubeconfig"
 
 type (
