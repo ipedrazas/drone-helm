@@ -49,6 +49,7 @@ type (
 		Force              bool     `json:"force"`
 		HelmRepos          []string `json:"helm_repos"`
 		Purge              bool     `json:"purge"`
+		Atomic             bool     `json:"atomic"`
 		UpdateDependencies bool     `json:"update_dependencies"`
 		StableRepoURL      string   `json:"stable_repo_url"`
 	}
@@ -137,6 +138,9 @@ func setUpgradeCommand(p *Plugin) {
 	}
 	if p.Config.Force {
 		upgrade = append(upgrade, "--force")
+	}
+	if p.Config.Atomic {
+		upgrade = append(upgrade, "--atomic")
 	}
 	p.command = upgrade
 }
