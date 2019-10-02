@@ -154,6 +154,10 @@ func main() {
 			EnvVar: "PLUGIN_PURGE,PURGE",
 		},
 		cli.BoolFlag{
+		    Name:   "atomic",
+		    Usage:  "if set, install/upgrade process rolls back or purges chart in case of failed install/upgrade"
+		}
+		cli.BoolFlag{
 			Name:   "update-dependencies",
 			Usage:  "update dependency charts based on the contents of requirements.yaml file of the local chart",
 			EnvVar: "PLUGIN_UPDATE_DEPENDENCIES,UPDATE_DEPENDENCIES",
@@ -205,6 +209,7 @@ func run(c *cli.Context) error {
 			ReuseValues:        c.Bool("reuse-values"),
 			Timeout:            c.String("timeout"),
 			Force:              c.Bool("force"),
+			Atomic:             c.Bool("atomic"),
 			UpdateDependencies: c.Bool("update-dependencies"),
 			StableRepoURL:      c.String("stable_repo_url"),
 		},
