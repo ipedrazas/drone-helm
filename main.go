@@ -154,8 +154,8 @@ func main() {
 			EnvVar: "PLUGIN_PURGE,PURGE",
 		},
 		cli.BoolFlag{
-		    Name:   "atomic",
-		    Usage:  "if set, install/upgrade process rolls back or purges chart in case of failed install/upgrade"
+			Name:   "atomic",
+			Usage:  "if set, install/upgrade process rolls back or purges chart in case of failed install/upgrade",
 		}
 		cli.BoolFlag{
 			Name:   "update-dependencies",

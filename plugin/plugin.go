@@ -140,7 +140,7 @@ func setUpgradeCommand(p *Plugin) {
 		upgrade = append(upgrade, "--force")
 	}
 	if p.Config.Atomic {
-	    upgrade = append(upgrade, "--atomic")
+		upgrade = append(upgrade, "--atomic")
 	}
 	p.command = upgrade
 }
