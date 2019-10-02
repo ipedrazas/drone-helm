@@ -156,7 +156,8 @@ func main() {
 		cli.BoolFlag{
 			Name:   "atomic",
 			Usage:  "if set, install/upgrade process rolls back or purges chart in case of failed install/upgrade",
-		}
+			EnvVar: "PLUGIN_ATOMIC,ATOMIC",
+		},
 		cli.BoolFlag{
 			Name:   "update-dependencies",
 			Usage:  "update dependency charts based on the contents of requirements.yaml file of the local chart",
