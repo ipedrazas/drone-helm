@@ -23,6 +23,16 @@ func main() {
 	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
+			Name:   "api_server",
+			Usage:  "kubernetes api server",
+			EnvVar: "PLUGIN_API_SERVER,API_SERVER",
+		},
+		cli.StringFlag{
+			Name:   "kubernetes_token",
+			Usage:  "kubernetes token to connect to the api server",
+			EnvVar: "PLUGIN_KUBERNETES_TOKEN,KUBERNETES_TOKEN",
+		},
+		cli.StringFlag{
 			Name:   "helm_command",
 			Usage:  "add the command Helm has to execute",
 			EnvVar: "PLUGIN_HELM_COMMAND,HELM_COMMAND",
@@ -176,7 +186,7 @@ func run(c *cli.Context) error {
 	p := plugin.Plugin{
 		Config: plugin.Config{
 			APIServer:          c.String("api_server"),
-			Token:              c.String("token"),
+			Token:              c.String("kubernetes_token"),
 			Certificate:        c.String("certificate"),
 			ServiceAccount:     c.String("service-account"),
 			KubeConfig:         c.String("kube-config"),
