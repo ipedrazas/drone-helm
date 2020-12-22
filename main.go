@@ -160,7 +160,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "stable_repo_url",
-			Usage:  "URL for stable repository (default 'https://kubernetes-charts.storage.googleapis.com')",
+			Usage:  "URL for stable repository (default 'https://charts.helm.sh/stable')",
 			EnvVar: "PLUGIN_STABLE_REPO_URL,STABLE_REPO_URL",
 		},
 	}
