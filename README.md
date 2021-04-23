@@ -1,3 +1,19 @@
+# Drone helm MoneySmart
+This is a forked repository from https://github.com/ipedrazas/drone-helm
+The image built is used in drone tasks to deploy helm charts to EKS.
+
+Two changes have been introduced to the base repo
+1. The Helm version has been hardcoded to use version 2.11
+2. The stable repo url default value has been set to "https://charts.helm.sh/stable" since helm version needs updating for the [actual fix](https://github.com/hashicorp/terraform-provider-helm/issues/649) for this.
+
+Image has been built and pushed to [dockerhub](https://hub.docker.com/repository/docker/moneysmartco/drone-helm) manually.
+
+To build and upload image run
+```
+docker build -t moneysmartco/drone-helm:tag-name
+docker push moneysmartco/drone-helm:tag-name
+```
+
 # Helm (Kubernetes) plugin for drone.io
 
 [![Build Status](https://cloud.drone.io/api/badges/ipedrazas/drone-helm/status.svg)](https://cloud.drone.io/ipedrazas/drone-helm)
@@ -8,8 +24,8 @@
 
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
-* Current `helm` version: 2.14.1
-* Current `kubectl` version: 1.14.3
+* Current `helm` version: 3.4.2
+* Current `kubectl` version: 1.21.0
 
 ## Drone Pipeline Usage
 
