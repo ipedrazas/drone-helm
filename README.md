@@ -24,8 +24,8 @@ docker push moneysmartco/drone-helm:tag-name
 
 This plugin allows to deploy a [Helm](https://github.com/kubernetes/helm) chart into a [Kubernetes](https://github.com/kubernetes/kubernetes) cluster.
 
-* Current `helm` version: 2.14.1
-* Current `kubectl` version: 1.14.3
+* Current `helm` version: 3.4.2
+* Current `kubectl` version: 1.21.0
 
 ## Drone Pipeline Usage
 

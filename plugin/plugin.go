@@ -292,11 +292,11 @@ func (p *Plugin) Exec() error {
 		p.debug()
 	}
 
-	init := doHelmInit(p)
-	err := runCommand(init)
-	if err != nil {
-		return fmt.Errorf("Error running helm command: " + strings.Join(init[:], " "))
-	}
+	// init := doHelmInit(p)
+	// err := runCommand(init)
+	// if err != nil {
+	// 	return fmt.Errorf("Error running helm command: " + strings.Join(init[:], " "))
+	// }
 
 	if len(p.Config.HelmRepos) > 0 {
 		for _, repo := range p.Config.HelmRepos {
@@ -316,7 +316,7 @@ func (p *Plugin) Exec() error {
 	}
 
 	if p.Config.UpdateDependencies {
-		if err = runCommand(doDependencyUpdate(p.Config.Chart)); err != nil {
+		if err := runCommand(doDependencyUpdate(p.Config.Chart)); err != nil {
 			return fmt.Errorf("Error updating dependencies: " + err.Error())
 		}
 	}
@@ -327,7 +327,7 @@ func (p *Plugin) Exec() error {
 		log.Println("helm command: " + strings.Join(p.command, " "))
 	}
 
-	err = runCommand(p.command)
+	var err = runCommand(p.command)
 	if err != nil {
 		return fmt.Errorf("Error running helm command: " + strings.Join(p.command[:], " "))
 	}
