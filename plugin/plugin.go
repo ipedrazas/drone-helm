@@ -111,6 +111,7 @@ func setUpgradeCommand(p *Plugin) {
 	if p.Config.Namespace != "" {
 		upgrade = append(upgrade, "--namespace")
 		upgrade = append(upgrade, p.Config.Namespace)
+		upgrade = append(upgrade, "--create-namespace")
 	}
 	if p.Config.TillerNs != "" {
 		upgrade = append(upgrade, "--tiller-namespace")
